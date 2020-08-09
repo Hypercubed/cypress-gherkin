@@ -3,8 +3,8 @@ import { Given, feature, scenario, given, when, then, gherkin } from '../../src/
 describe('errors', () => {
   it('throws on undefined parameter', () => {
     expect(() => {
-      Given('{airport} is closed because of a strike', function (airport: any) {
-        throw new Error('Should not be called because airport type not defined')
+      Given('{airport} is closed because of a strike', (airport: any) => {
+        throw new Error(`Should not be called because ${airport} type not defined`)
       });
     }).to.throw('Undefined parameter type {airport}');
   });

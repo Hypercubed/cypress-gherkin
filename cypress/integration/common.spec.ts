@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, given, when, then, and, gherkin, setupCommon } from '../../src/index';
+import { feature, scenario, given, when, then, and, gherkin, setupCommon } from '../../src/index';
 
 setupCommon();
 

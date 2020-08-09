@@ -29,7 +29,7 @@ gherkin(
 // ** OR  **
 
 feature('Context sharing in Gherkin syntax', () => {
-  scenario('Sharing', function () {
+  scenario('Sharing', () => {
     given('I go to the actions page');
     when('I type "hello" into the ".action-email" input');
     then('I see the input');

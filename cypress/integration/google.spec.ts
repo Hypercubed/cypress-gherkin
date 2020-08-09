@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, given, when, then, gherkin } from '../../src/index';
+import { Given, Then, feature, scenario, given, then, gherkin } from '../../src/index';
 
 const url = 'https://google.com'
 Given('I open Google page', () => {

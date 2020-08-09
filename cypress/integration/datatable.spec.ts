@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, background, given, when, then, gherkin } from '../../src/index';
+import { When, Then, feature, scenario, when, then, gherkin } from '../../src/index';
 import { messages } from '@cucumber/messages';
 
 // you can have external state, and also require things!

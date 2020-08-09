@@ -1,124 +1,113 @@
-import { Given, When, Then, feature, scenario, background, given, when, then, outline } from '../../src/index';
+import { Given, When, Then, feature, scenario, gherkin, given, when, then, outline, scenarioOutline } from '../../src/index';
 
-const fruitToJuice: any = {
-  apple: 'apple juice',
-  pineapple: 'pineapple juice',
-  strawberry: 'strawberry juice'
-};
+let count: number;
 
-let juice = "";
-
-Given("I put {string} in a juicer", (fruit: string) => {
-  juice = fruitToJuice[fruit];
-  expect(typeof juice).to.equal("string");
+Given('there are {int} cucumbers', (initialCount: number) => {
+  count = initialCount
 });
 
-When("I switch it on", () => {
-  expect(true).to.equal(true);
+When('I eat {int} cucumbers', (eatCount: number) => {
+  count -= eatCount
 });
 
-Then("I should get {string}", (resultJuice: string) => {
-  expect(resultJuice).to.equal(juice);
+Then('I should have {int} cucumbers', (expectedCount: number) => {
+  assert.strictEqual(count, expectedCount)
 });
 
-// Feature: Being a plugin handling Scenario Outline
-//
-//   As a cucumber cypress plugin which handles Scenario Outline
-//   I want to allow people to write Scenario Outline tests and run it in cypress
-//
-//   Scenario Outline: Use juicer with <fruit>
-//     Given I put "<fruit>" in a juicer
-//     When I switch it on
-//     Then I should get "<juice>"
+gherkin(`
 
-//     Examples:
-//       | fruit      | juice            |
-//       | apple      | apple juice      |
-//       | pineapple  | pineapple juice  |
-//       | strawberry | strawberry juice |
+  Feature: Examples Tables
+    Sometimes it can be desireable to run the same scenario multiple times
+    with different data each time. This can be done by placing an Examples
+    section with an Examples Table underneath a Scenario, and use <placeholders>
+    in the Scenario, matching the table headers.
 
-feature('Using examples in Gherkin syntax', () => {
-  const examples: any = [
-    ['apple', 'apple juice'],
-    ['pineapple', 'pineapple juice'],
-    ['strawberry', 'strawberry juice'],
-  ];
+    Scenario Outline: eating cucumbers
+      Given there are <start> cucumbers
+      When I eat <eat> cucumbers
+      Then I should have <left> cucumbers
 
-  examples.forEach(([fruit, juice]: string[]) => {
-    scenario(`Use juicer with ${fruit}`, () => {
-      given(`I put "${fruit}" in a juicer`);
-      when(`I switch it on`);
-      then(`I should get "${juice}"`);
+      Examples: These are passing
+        | start | eat | left |
+        |    12 |   5 |    7 |
+        |    20 |   5 |   15 |
+
+      Examples: These are also passing
+        | start | eat | left |
+        |    22 |   5 |   17 |
+        |    10 |   5 |    5 |
+
+`);
+
+feature('Examples Tables in Gherkin syntax', () => {
+  describe(`eating cucumbers`, () => {
+    const template = ([start, eat, left]: any[]) => {
+      given(`there are ${start} cucumbers`);
+      when(`I eat ${eat} cucumbers`);
+      then(`I should have ${left} cucumbers`);
+    };
+    
+    scenario(`These are passing`, () => {
+      const example = [
+        [12,       5,    7],
+        [20,       5,    15]
+      ];
+
+      example.forEach(template);
+    });
+
+    scenario(`These are also passing`, () => {
+      const example = [
+        [22,       5,    17],
+        [10,       5,     5]
+      ];
+
+      example.forEach(template);
     });
   });
 });
 
-feature('Using Scenario Outline in Gherkin syntax', () => {
+feature('Examples Tables in Gherkin outline', () => {
+  const template = ({start, eat, left}: any) => {
+    given(`there are ${start} cucumbers`);
+    when(`I eat ${eat} cucumbers`);
+    then(`I should have ${left} cucumbers`);
+  };
 
-  const examples: any = [
-    ['fruit', 'juice'],
-    ['apple', 'apple juice'],
-    ['pineapple', 'pineapple juice'],
-    ['strawberry', 'strawberry juice'],
-  ];
+  describe(`eating cucumbers`, () => { 
+    outline(`These are passing`, template, [
+      ['start', 'eat', 'left'],
+      [12,       5,    7],
+      [20,       5,    15]
+    ]);
 
-  outline(({fruit, juice}: {fruit: string, juice: string}) => {
-    scenario(`Use juicer with ${fruit}`, () => {
-      given(`I put "${fruit}" in a juicer`);
-      when(`I switch it on`);
-      then(`I should get "${juice}"`);
-    });
-  }, examples);
-});
-
-// Feature: Being a plugin handling Scenario Outline
-
-//   As a cucumber cypress plugin which handles Scenario Outline
-//   I want to allow people to write Scenario Outline tests and run it in cypress
-
-//   Scenario Outline: Using Scenario Outlines
-//     When I add <provided number> and <another provided number>
-//     Then I verify that the result is equal the <provided>
-
-//     Examples:
-//       | provided number | another provided number | provided |
-//       | 1               | 2                       | 3        |
-//       | 100             | 200                     | 300      |
-
-let sum = 0;
-
-When(`I add {int} and {int}`, (a: number, b: number) => {
-  sum = a + b;
-});
-
-Then(`I verify that the result is equal to {int}`, (result: number) => {
-  expect(sum).to.equal(result);
-});
-
-feature('Scenario Outline', () => {
-  const examples: any = [
-    [1, 2, 3],
-    [100, 200, 300]
-  ];
-  scenario(`Using Scenario Outlines`, () => {
-    examples.forEach(([a, b, c]: any) => {
-      given(`I add ${a} and ${b}`);
-      then(`I verify that the result is equal to ${c}`);
-    });
+    outline(`These are also passing`, template, [
+      ['start', 'eat', 'left'],
+      [12,       5,    7],
+      [20,       5,    15]
+    ]);
   });
 });
 
-feature('Scenario Outline', () => {
-  const examples: any = [
-    ['provided_number', 'another_provided_number', 'provided'],
-    [1, 2, 3],
-    [100, 200, 300]
-  ];
-  scenario(`Using Scenario Outlines`, () => {
-    outline(({provided_number, another_provided_number, provided}: any) => {
-      given(`I add ${provided_number} and ${another_provided_number}`);
-      then(`I verify that the result is equal to ${provided}`);
-    }, examples);
-  });
+feature('Examples Tables in Gherkin syntax using scenarioOutline', () => {
+  scenarioOutline(`eating cucumbers`, ({start, eat, left}: any) => {
+    given(`there are ${start} cucumbers`);
+    when(`I eat ${eat} cucumbers`);
+    then(`I should have ${left} cucumbers`);
+  },
+    [
+      'These are passing',
+      ['start', 'eat', 'left'],
+      [12,       5,    7],
+      [20,       5,    15]
+    ],
+    [
+      'These are also passing',
+      ['start', 'eat', 'left'],
+      [22,       5,    17],
+      [10,       5,     5]
+    ]
+  );
 });
+
 

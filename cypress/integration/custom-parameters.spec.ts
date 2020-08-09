@@ -3,12 +3,12 @@ import { Given, When, Then, feature, scenario, when, then, ParameterType, gherki
 const notes = ["A", "B", "C", "D", "E", "F", "G"];
 
 ParameterType({
-  name: "note",
-  regexp: new RegExp(notes.join("|"))
+  name: 'note',
+  regexp: new RegExp(notes.join('|'))
 });
 
 ParameterType({
-  name: "ordinal",
+  name: 'ordinal',
   regexp: /(\d+)(?:st|nd|rd|th)/,
   transformer(s: string) {
     return parseInt(s, 10);
@@ -69,10 +69,10 @@ ParameterType({
   },
 })
 
-Given('{flight} has been delayed {int} minutes', function (
+Given('{flight} has been delayed {int} minutes', (
   flight: Flight,
   delay: number
-) {
+) => {
   assert.equal(flight.from, 'LHR')
   assert.equal(flight.to, 'CDG')
   assert.equal(delay, 45)

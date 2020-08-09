@@ -1,17 +1,18 @@
-import { Given, When, Then, feature, scenario, background, given, when, then, gherkin } from '../../src/index';
+import { When, Then, feature, scenario, when, then, gherkin } from '../../src/index';
 
 function content(docString: any) {
   return docString.content || docString;
 }
 
-let freemarkerSnippet: string | null;
+let snippet: string | null;
+
 When('I use DocString like this', (dataString: any) => {
-  freemarkerSnippet = content(dataString);
+  snippet = content(dataString);
 });
 
 Then('I can interpret it as a string', () => {
-  expect(freemarkerSnippet).to.be.a('string');
-  freemarkerSnippet = null;
+  expect(snippet).to.be.a('string');
+  snippet = null;
 });
 
 gherkin(`

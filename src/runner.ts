@@ -69,6 +69,35 @@ const gherkinDoStep = (step: any) => {
   execute(step.keyword, step.text, ...args);
 };
 
+const gherkinOutline = (scenario: any) => {
+  describe(scenario.name || '', () => {
+    scenario.examples.forEach((example: any) => {
+      const tableHeaderRegex = example.tableHeader.cells.map((cell: any) => new RegExp(`<${cell.value}>`, 'g'));  // TODO: escape value
+
+      it(example.name || '', () => {
+        example.tableBody.forEach((tableRow: any) => {
+          const values = tableRow.cells.map((cell: any) => cell.value);
+
+            scenario.steps.forEach((step: any) => {
+              let { text } = step;
+
+              tableHeaderRegex.forEach((re: RegExp, i: number) => {
+                text = text.replace(re, values[i]);
+              });
+
+              gherkinDoStep({
+                ...step,
+                text
+              });
+            });
+
+        });
+      });
+      
+    });
+  });
+};
+
 const gherkinChild = (child: any) => {
   const type = child.value;
   switch (type) {
@@ -79,9 +108,13 @@ const gherkinChild = (child: any) => {
       });
       break;
     case 'scenario':
-      it(child.scenario.name || '', () => {
-        child.scenario.steps.forEach(gherkinDoStep);
-      });
+      if (child.scenario.name) {
+        gherkinOutline(child.scenario);
+      } else {
+        it(child.scenario.name || '', () => {
+          child.scenario.steps.forEach(gherkinDoStep);
+        });        
+      }
       break;
     case 'background':
       beforeEach(() => {
@@ -93,6 +126,7 @@ const gherkinChild = (child: any) => {
 
 export const gherkin = (text: string) => {
   const ast = parser.parse(text);
+  console.log(ast);
 
   if (ast.feature) {
     const { name, children } = ast.feature;
