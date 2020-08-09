@@ -1,0 +1,19 @@
+{
+  "name": "cypress-gherkin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cy": "cypress open"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cucumber/cucumber-expressions": "^10.3.0",
+    "@cucumber/gherkin": "^15.0.0",
+    "cucumber": "^6.0.5",
+    "cypress": "^4.12.1",
+    "typescript": "^3.9.7"
+  }
+}
