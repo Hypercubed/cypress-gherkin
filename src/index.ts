@@ -22,7 +22,7 @@ export const outline = (method: any, examples: any[]) => {
   const heading = examples.splice(0, 1)[0];
   const props: any = {};
 
-  examples.forEach(row => {
+  examples.forEach((row) => {
     heading.forEach((key: string, i: number) => {
       props[key] = row[i];
     });
@@ -30,10 +30,4 @@ export const outline = (method: any, examples: any[]) => {
   });
 };
 
-export {
-  ParameterType,
-  setupCommon,
-  gherkin
-};
-
-
+export { ParameterType, setupCommon, gherkin };

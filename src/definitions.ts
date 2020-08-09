@@ -3,32 +3,45 @@ import {
   ParameterTypeRegistry,
   CucumberExpressionGenerator,
   ExpressionFactory,
-  ParameterType as _ParameterType
+  ParameterType as _ParameterType,
 } from '@cucumber/cucumber-expressions';
 
 type Matcher = string | RegExp;
 
+type AnyFunction = (...args: any[]) => any;
+
 interface Definition {
-  type: string,
-  matcher: Matcher,
-  expression: Expression,
-  implementation: Function,
-  options: any
+  type: string;
+  matcher: Matcher;
+  expression: Expression;
+  implementation: AnyFunction;
+  options: any;
 }
 
 const definitions: Definition[] = [];
 
 const parameterTypeRegistry = new ParameterTypeRegistry();
-const cucumberExpressionGenerator = new CucumberExpressionGenerator(parameterTypeRegistry);
+const cucumberExpressionGenerator = new CucumberExpressionGenerator(
+  parameterTypeRegistry
+);
 const expressionFactory = new ExpressionFactory(parameterTypeRegistry);
 
-export const Step = (type: string, matcher: Matcher, implementation: Function = () => {}, options = { log: true }) => {
+function noop() {
+  // noop
+}
+
+export const Step = (
+  type: string,
+  matcher: Matcher,
+  implementation: AnyFunction = noop,
+  options = { log: true }
+) => {
   definitions.push({
     type: type.trim(),
     matcher,
     expression: expressionFactory.createExpression(matcher),
     implementation,
-    options
+    options,
   });
 };
 
@@ -40,7 +53,12 @@ export const resolve = (_type: string, text: string) => {
 
 export const generateHint = (type: string, text: string) => {
   const examples = cucumberExpressionGenerator.generateExpressions(text);
-  const suggestions = examples.map(example => `${type}('${example.source}', (${example.parameterNames}) => {});`).join('\n');
+  const suggestions = examples
+    .map(
+      (example) =>
+        `${type}('${example.source}', (${example.parameterNames}) => {});`
+    )
+    .join('\n');
   return `Missing Gherkin statement: ${type} ${text}
 
 Suggestion(s):
@@ -67,4 +85,4 @@ export const ParameterType = ({
     preferForRegexpMatch
   );
   parameterTypeRegistry.defineParameterType(parameterType);
-}
+};

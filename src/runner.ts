@@ -10,19 +10,21 @@ const parser = new Parser(new AstBuilder(nextId));
 export const execute = (_type: string, text: string, ..._args: any[]) => {
   const resolved = resolve(_type, text);
   if (resolved) {
-    let args = resolved.expression.match(text).map(match => match.getValue(null));
+    let args = resolved.expression
+      .match(text)
+      .map((match) => match.getValue(null));
     args = [...args, ..._args];
 
     const fn = resolved.implementation;
 
-    const consoleProps = (value: any) => () => {
+    const consoleProps = (val: any) => () => {
       return {
         Text: text,
         Function: fn.name || undefined,
         Args: args || [],
         Contents: fn.toString(),
-        Yielded: isJquery(value) ? getElements(value) : value,
-      }
+        Yielded: isJquery(val) ? getElements(val) : val,
+      };
     };
 
     let log = resolved.options.log;
@@ -31,22 +33,22 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
       cy.then(() => {
         log = Cypress.log({
           name: _type,
-          message: `${_type}, ${text}`
+          message: `${_type}, ${text}`,
         });
         log.snapshot('before', { at: 0 });
       });
     }
-    
+
     let value = fn.apply(null, args);
     value = Cypress.isCy(value) ? value : cy.wrap(value);
 
     if (log) {
       return value.then((val: any) => {
         log.set({
-          consoleProps: consoleProps(val)
+          consoleProps: consoleProps(val),
         });
 
-        log.snapshot('after', { at: 1 });   
+        log.snapshot('after', { at: 1 });
         return val;
       });
     }
@@ -55,15 +57,15 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
   } else {
     // return Cypress.Promise.(new Error(generateHint(_type.trim(), text)));
     // return cy.then(() => {
-      const err = new Error(generateHint(_type.trim(), text));
-      // err.stack = undefined;
-      throw err;
+    const err = new Error(generateHint(_type.trim(), text));
+    // err.stack = undefined;
+    throw err;
     // });
   }
 };
 
 const gherkinDoStep = (step: any) => {
-  const args = [step.dataTable, step.docString].filter(e => e);
+  const args = [step.dataTable, step.docString].filter((e) => e);
   execute(step.keyword, step.text, ...args);
 };
 
@@ -85,7 +87,7 @@ const gherkinChild = (child: any) => {
       beforeEach(() => {
         child.background.steps.forEach(gherkinDoStep);
       });
-      break;          
+      break;
   }
 };
 
@@ -100,4 +102,4 @@ export const gherkin = (text: string) => {
       }
     });
   }
-}
+};
