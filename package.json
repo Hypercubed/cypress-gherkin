@@ -1,7 +1,7 @@
 {
   "name": "cypress-gherkin",
   "version": "1.0.0",
-  "description": "",
+  "description": "Gherkin syntax in Cypress",
   "main": "index.js",
   "scripts": {
     "build": "run-s clean && run-p build:*",
