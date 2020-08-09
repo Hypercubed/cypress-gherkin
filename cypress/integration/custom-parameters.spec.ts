@@ -1,4 +1,4 @@
-import { When, Then, feature, scenario, when, then, ParameterType, gherkin } from '../../src/index';
+import { Given, When, Then, feature, scenario, when, then, ParameterType, gherkin } from '../../src/index';
 
 const notes = ["A", "B", "C", "D", "E", "F", "G"];
 
@@ -55,3 +55,37 @@ feature('Custom Parameter Types in Gherkin Syntax', () => {
     then('I should hear a B sound');
   });
 });
+
+
+class Flight {
+  constructor(public readonly from: string, public readonly to: string) {}
+}
+
+ParameterType({
+  name: 'flight',
+  regexp: /([A-Z]{3})-([A-Z]{3})/,
+  transformer(from: string, to: string) {
+    return new Flight(from, to)
+  },
+})
+
+Given('{flight} has been delayed {int} minutes', function (
+  flight: Flight,
+  delay: number
+) {
+  assert.equal(flight.from, 'LHR')
+  assert.equal(flight.to, 'CDG')
+  assert.equal(delay, 45)
+})
+
+gherkin(`
+Feature: Parameter Types
+  Cucumber lets you define your own parameter types, which can be used
+  in Cucumber Expressions. This lets you define a precise domain-specific
+  vocabulary which can be used to generate a glossary with examples taken
+  from your scenarios. They also let you transform strings and tables into
+  rich types.
+
+  Scenario: flights
+    Given LHR-CDG has been delayed 45 minutes
+`);

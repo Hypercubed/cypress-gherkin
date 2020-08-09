@@ -1,4 +1,24 @@
-import { feature, scenario, given, when, then, gherkin } from '../../src/index';
+import { Given, feature, scenario, given, when, then, gherkin } from '../../src/index';
+
+describe('errors', () => {
+  it('throws on undefined parameter', () => {
+    expect(() => {
+      Given('{airport} is closed because of a strike', function (airport: any) {
+        throw new Error('Should not be called because airport type not defined')
+      });
+    }).to.throw('Undefined parameter type {airport}');
+  });
+
+  it('throws on undefined step', () => {
+    expect(() => {
+      then('the URL should include "/commands/actions"');
+    }).to.throw('Missing Gherkin statement');
+  });
+});
+
+// Given('{airport} is closed because of a strike', function (airport: any) {
+//   throw new Error('Should not be called because airport type not defined')
+// });
 
 // gherkin(
 //   `
@@ -20,6 +40,10 @@ import { feature, scenario, given, when, then, gherkin } from '../../src/index';
 
 //   scenario('Types and asserts', () => {
 //     given('a user visits "https://example.cypress.io/commands/actions"');
+//   });
+
+//   scenario('Missing type', () => {
+//     given('a {user} visits "https://example.cypress.io/commands/actions"');
 //   });
 // });
 

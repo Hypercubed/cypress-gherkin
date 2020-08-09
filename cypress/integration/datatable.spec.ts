@@ -1,5 +1,5 @@
 import { Given, When, Then, feature, scenario, background, given, when, then, gherkin } from '../../src/index';
-import { messages } from '@cucumber/messages'
+import { messages } from '@cucumber/messages';
 
 // you can have external state, and also require things!
 let sum = 0;
@@ -30,11 +30,6 @@ Then('I verify the datatable result is equal to {int}', (result: number) => {
   expect(sum).to.equal(result);
 });
 
-Given('I have a table with some escaped characters in it', (dataTable: any) => {
-  console.log(dataTable);
-  // we don't need to do anything, just make sure it doesn't break
-});
-
 gherkin(`
   Feature: Using DataTable in Gherkin text
 
@@ -47,11 +42,6 @@ gherkin(`
         | 1      | 2              |
         | 3      | 4              |
       Then I verify the datatable result is equal to 10
-
-    Scenario: New line character
-      Given I have a table with some escaped characters in it
-        | foo        | bar        |
-        | foo\\nfoo  | bar\\nbar  |
 `)
 
 /// ** OR **
@@ -66,14 +56,5 @@ feature('Using DataTable in Gherkin syntax', () => {
 
     when('I add all following numbers', dataTable);
     then('I verify the datatable result is equal to 10');
-  });
-
-  scenario('New line character', () => {
-    const dataTable = [
-      ['foo', 'bar'],
-      ['foo\nfoo','bar\nbar'],
-    ];
-
-    given('I have a table with some escaped characters in it', dataTable);
   });
 });
