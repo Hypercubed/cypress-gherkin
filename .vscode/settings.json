@@ -3,6 +3,9 @@
   "cSpell.ignoreWords": [
     "datatable",
     "picklejs"
+  ],
+  "cSpell.words": [
+    "textbox"
   ]
   // "typescript.implementationsCodeLens.enabled": true
   // "typescript.referencesCodeLens.enabled": true

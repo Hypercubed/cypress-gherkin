@@ -1,4 +1,4 @@
-import { Given, feature, scenario, given, when, then, gherkin } from '../../src/index';
+import { Given, /* feature, scenario, given, when,*/ then, /* gherkin */ } from '../../src/index';
 
 describe('errors', () => {
   it('throws on undefined parameter', () => {

@@ -93,7 +93,7 @@ const gherkinOutline = (scenario: any) => {
 
         });
       });
-      
+
     });
   });
 };
@@ -126,7 +126,6 @@ const gherkinChild = (child: any) => {
 
 export const gherkin = (text: string) => {
   const ast = parser.parse(text);
-  console.log(ast);
 
   if (ast.feature) {
     const { name, children } = ast.feature;
