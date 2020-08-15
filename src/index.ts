@@ -4,8 +4,6 @@ import { execute, gherkin } from './runner';
 export const Given = Step.bind(null, 'Given');
 export const When = Step.bind(null, 'When');
 export const Then = Step.bind(null, 'Then');
-export const And = Step.bind(null, 'And');
-export const But = Step.bind(null, 'But');
 
 export const feature = describe;
 export const rule = describe;

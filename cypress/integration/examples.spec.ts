@@ -25,9 +25,9 @@ Then('I should have {int} cucumbers', (...args) => steps.left(...args));
 
 feature('Calls steps', () => {
   beforeEach(() => {
-    cy.spy(steps, 'start').as('background');
-    cy.spy(steps, 'eat').as('visit');
-    cy.spy(steps, 'left').as('click');
+    cy.spy(steps, 'start').as('start');
+    cy.spy(steps, 'eat').as('eat');
+    cy.spy(steps, 'left').as('left');
   });
 
   feature('Examples Tables in Gherkin syntax using scenarioOutline', () => {
@@ -36,9 +36,9 @@ feature('Calls steps', () => {
       when(`I eat ${eat} cucumbers`);
       then(`I should have ${left} cucumbers`);
 
-      expect(steps.start).to.have.calledWith(start);
-      expect(steps.eat).to.have.calledWith(eat);
-      expect(steps.left).to.have.calledWith(left);
+      cy.get('@start').should('calledWith', start);
+      cy.get('@eat').should('calledWith', eat);
+      cy.get('@left').should('calledWith', left);
     },
       [
         'These are passing',
@@ -57,9 +57,9 @@ feature('Calls steps', () => {
 
   describe('gherkin text', () => {
     beforeEach(() => {
-      cy.stub(window, 'describe', (_name, fn) => fn());
-      cy.stub(window, 'it', (_name, fn) => fn());
-      cy.stub(window, 'beforeEach', (fn) => fn());
+      cy.stub(window, 'describe', (_name, fn) => fn()).as('describe');
+      cy.stub(window, 'it', (_name, fn) => fn()).as('it');
+      cy.stub(window, 'beforeEach', (fn) => fn()).as('beforeEach');
     });
 
     it('runs gherkin with example', () => {
@@ -83,24 +83,24 @@ feature('Calls steps', () => {
         `
       );
 
-      expect(window.describe).to.have.callCount(2);
-      expect(window.it).to.have.callCount(2);
+      cy.get('@describe').should('callCount', 2);
+      cy.get('@it').should('callCount', 2);
 
-      expect(steps.start).to.have.calledWith(12);
-      expect(steps.eat).to.have.calledWith(5);
-      expect(steps.left).to.have.calledWith(7);
+      cy.get('@start').should('calledWith', 12);
+      cy.get('@eat').should('calledWith', 5);
+      cy.get('@left').should('calledWith', 7);
 
-      expect(steps.start).to.have.calledWith(20);
-      expect(steps.eat).to.have.calledWith(6);
-      expect(steps.left).to.have.calledWith(14);
+      cy.get('@start').should('calledWith', 20);
+      cy.get('@eat').should('calledWith', 6);
+      cy.get('@left').should('calledWith', 14);
 
-      expect(steps.start).to.have.calledWith(22);
-      expect(steps.eat).to.have.calledWith(7);
-      expect(steps.left).to.have.calledWith(15);
+      cy.get('@start').should('calledWith', 22);
+      cy.get('@eat').should('calledWith', 7);
+      cy.get('@left').should('calledWith', 15);
 
-      expect(steps.start).to.have.calledWith(10);
-      expect(steps.eat).to.have.calledWith(8);
-      expect(steps.left).to.have.calledWith(2);
+      cy.get('@start').should('calledWith', 10);
+      cy.get('@eat').should('calledWith', 8);
+      cy.get('@left').should('calledWith', 2);
     });
   });
 });

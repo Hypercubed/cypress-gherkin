@@ -32,38 +32,35 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
 
     let log = resolved.options.log;
 
-    if (log) {
-      cy.then(() => {
+    return cy.then(async () => {
+      if (log) {
         log = Cypress.log({
           name: _type,
           message: `${_type}, ${text}`,
         });
         log.snapshot('before', { at: 0 });
-      });
-    }
+      }
 
-    let value = fn.apply(null, args);
-    value = Cypress.isCy(value) ? value : cy.wrap(value);
+      let value = fn.apply(null, args);
+      value = Cypress.isCy(value) ? value : Promise.resolve(value);
 
-    if (log) {
-      return value.then((val: any) => {
-        log.set({
-          consoleProps: consoleProps(val),
+      if (log) {
+        return value.then((val: any) => {
+          log.set({
+            consoleProps: consoleProps(val),
+          });
+
+          log.snapshot('after', { at: 1 });
+
+          return val;
         });
+      }
 
-        log.snapshot('after', { at: 1 });
-        return val;
-      });
-    }
-
-    return value;
+      return value;
+    });
   } else {
-    // return Cypress.Promise.(new Error(generateHint(_type.trim(), text)));
-    // return cy.then(() => {
     const err = new Error(generateHint(_type.trim(), text));
-    // err.stack = undefined;
     throw err;
-    // });
   }
 };
 

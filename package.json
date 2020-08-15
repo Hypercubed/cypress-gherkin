@@ -1,8 +1,11 @@
 {
-  "name": "cypress-gherkin",
+  "name": "@hypercubed/cypress-gherkin",
   "version": "0.0.0",
   "description": "Gherkin syntax in Cypress",
-  "main": "index.js",
+  "main": "build/main/index.js",
+  "module": "build/module/index.js",
+  "typings": "build/main/index.d.ts",
+
   "scripts": {
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",

@@ -10,6 +10,10 @@ type Matcher = string | RegExp;
 
 type AnyFunction = (...args: any[]) => any;
 
+interface StepOptions {
+  log: boolean;
+}
+
 interface Definition {
   type: string;
   matcher: Matcher;
@@ -34,7 +38,7 @@ export const Step = (
   type: string,
   matcher: Matcher,
   implementation: AnyFunction = noop,
-  options = { log: true }
+  options: StepOptions = { log: true }
 ) => {
   definitions.push({
     type: type.trim(),

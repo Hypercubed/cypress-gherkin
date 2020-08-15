@@ -55,9 +55,9 @@ feature('Calls steps', () => {
       when('they click the link labeled "type"');
       then('the URL should include "/commands/actions"');
 
-      expect(steps.visit).to.be.calledWith('https://example.cypress.io');
-      expect(steps.click).to.be.calledWith('type');
-      expect(steps.url).to.be.calledWith('/commands/actions');
+      cy.get('@visit').should('calledWith', 'https://example.cypress.io');
+      cy.get('@click').should('calledWith', 'type');
+      cy.get('@url').should('calledWith', '/commands/actions');
     });
 
     scenario('Types and asserts', () => {
@@ -65,17 +65,17 @@ feature('Calls steps', () => {
       when('they type "fake@email.com" into the ".action-email" input');
       then('the ".action-email" input has "fake@email.com" as its value');
 
-      expect(steps.visit).to.be.calledWith('https://example.cypress.io/commands/actions');
-      expect(steps.type).to.be.calledWith('fake@email.com', '.action-email');
-      expect(steps.value).to.be.calledWith('.action-email', 'fake@email.com');
+      cy.get('@visit').should('calledWith', 'https://example.cypress.io/commands/actions');
+      cy.get('@type').should('calledWith', 'fake@email.com', '.action-email');
+      cy.get('@value').should('calledWith', '.action-email', 'fake@email.com');
     });    
   });
 
   describe('gherkin text', () => {
     beforeEach(() => {
-      cy.stub(window, 'describe', (_name, fn) => fn());
-      cy.stub(window, 'it', (_name, fn) => fn());
-      cy.stub(window, 'beforeEach', (fn) => fn());
+      cy.stub(window, 'describe', (_name, fn) => fn()).as('describe');
+      cy.stub(window, 'it', (_name, fn) => fn()).as('it');
+      cy.stub(window, 'beforeEach', (fn) => fn()).as('beforeEach');
     });
 
     it('runs simple gherkin text', () => {
@@ -99,19 +99,19 @@ feature('Calls steps', () => {
         `
       );
 
-      expect(window.describe).to.have.callCount(2);
-      expect(window.beforeEach).to.have.callCount(1);
-      expect(window.it).to.have.callCount(2);
+      cy.get('@describe').should('callCount', 2);
+      cy.get('@beforeEach').should('callCount', 1);
+      cy.get('@it').should('callCount', 2);
 
-      expect(steps.background).to.have.callCount(1);
+      cy.get('@background').should('callCount', 1);
 
-      expect(steps.visit).to.have.calledWith('https://example.cypress.io');
-      expect(steps.click).to.be.calledWith('type');
-      expect(steps.url).to.be.calledWith('/commands/actions');
+      cy.get('@visit').should('calledWith', 'https://example.cypress.io');
+      cy.get('@click').should('calledWith', 'type');
+      cy.get('@url').should('calledWith', '/commands/actions');
 
-      expect(steps.visit).to.have.calledWith('https://example.cypress.io/commands/actions');
-      expect(steps.type).to.be.calledWith('fake@email.com', '.action-email');
-      expect(steps.value).to.be.calledWith('.action-email', 'fake@email.com');
+      cy.get('@visit').should('calledWith', 'https://example.cypress.io/commands/actions');
+      cy.get('@type').should('calledWith', 'fake@email.com', '.action-email');
+      cy.get('@value').should('calledWith', '.action-email', 'fake@email.com');
     });
   });
 });

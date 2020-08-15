@@ -1,4 +1,4 @@
-import { Given, When, Then, And, But, feature, scenario, given, when, then, and, but, gherkin } from '../../../src/index';
+import { Given, When, Then, feature, scenario, given, when, then, and, but, gherkin } from '../../../src/index';
 
 let stepCounter = 0;
 let step2Counter = 0;
@@ -12,7 +12,7 @@ When('I do something', () => {
   stepCounter += 1;
 });
 
-And('Something else', () => {
+Given('Something else', () => {
   stepCounter += 2;
 });
 
@@ -24,7 +24,7 @@ When('I don\'t do something', () => {
   step2Counter += 1;
 });
 
-And('it is sunday', () => {
+Given('it is sunday', () => {
   step2Counter += 2;
 });
 
@@ -33,7 +33,7 @@ Then('I stream on twitch', () => {
   step2Counter += 1;
 });
 
-But('only when not tired', () => {
+When('only when not tired', () => {
   expect(step2Counter).to.equal(4);
 });
 
