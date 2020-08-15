@@ -1,4 +1,4 @@
-import { Given, When, Then, And, But, feature, scenario, given, when, then, and, but, gherkin } from '../../src/index';
+import { Given, When, Then, And, But, feature, scenario, given, when, then, and, but, gherkin } from '../../../src/index';
 
 let stepCounter = 0;
 let step2Counter = 0;

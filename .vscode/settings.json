@@ -6,6 +6,12 @@
   ],
   "cSpell.words": [
     "textbox"
+  ],
+  "cSpell.enableFiletypes": [
+    "!javascript",
+    "!json",
+    "!jsonc",
+    "!typescript"
   ]
   // "typescript.implementationsCodeLens.enabled": true
   // "typescript.referencesCodeLens.enabled": true

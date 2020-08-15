@@ -13,7 +13,9 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
     let args = resolved.expression
       .match(text)
       .map((match) => match.getValue(null));
-    args = [...args, ..._args];
+    if (_args && args.length) {
+      args = [...args, ..._args];
+    }
 
     const fn = resolved.implementation;
 
@@ -100,6 +102,7 @@ const gherkinOutline = (scenario: any) => {
 
 const gherkinChild = (child: any) => {
   const type = child.value;
+  
   switch (type) {
     case 'feature':
     case 'rule':
@@ -108,12 +111,12 @@ const gherkinChild = (child: any) => {
       });
       break;
     case 'scenario':
-      if (child.scenario.name) {
+      if (child.scenario.examples && child.scenario.examples.length) {
         gherkinOutline(child.scenario);
       } else {
         it(child.scenario.name || '', () => {
           child.scenario.steps.forEach(gherkinDoStep);
-        });        
+        });
       }
       break;
     case 'background':
@@ -126,7 +129,7 @@ const gherkinChild = (child: any) => {
 
 export const gherkin = (text: string) => {
   const ast = parser.parse(text);
-
+  
   if (ast.feature) {
     const { name, children } = ast.feature;
     describe(name || '', () => {

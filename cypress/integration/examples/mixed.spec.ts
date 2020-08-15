@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, given, then, and } from '../../src/index';
+import { Given, When, Then, feature, scenario, given, then, and } from '../../../src/index';
 
 Given('a user visits {string}', (s: string) => {
   return cy.visit(s);

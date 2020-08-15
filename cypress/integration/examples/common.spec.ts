@@ -1,6 +1,5 @@
-import { feature, scenario, given, when, then, and, gherkin, setupCommon } from '../../src/index';
-
-setupCommon();
+import { feature, scenario, given, when, then, and, gherkin } from '../../../src/index';
+import '../../support/gherkin-steps/common';
 
 gherkin(
   `
@@ -43,7 +42,7 @@ feature('Using common phases in Gherkin style', () => {
 
   scenario('A user', () => {
     given('a user opens the "https://example.cypress.io" page');
-      and('they see "Cypress" in the window title');
+      and('they see "Cypress" in the title');
     when('the user scrolls to the bottom');
       and('the user scrolls to the top');
       and('they click the "type" link');

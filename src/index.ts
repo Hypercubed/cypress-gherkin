@@ -1,5 +1,4 @@
 import { Step, ParameterType } from './definitions';
-import { setupCommon } from './common';
 import { execute, gherkin } from './runner';
 
 export const Given = Step.bind(null, 'Given');
@@ -47,4 +46,4 @@ export const scenarioOutline = (name: string, method: any, ...examples: any[]) =
   });
 };
 
-export { ParameterType, setupCommon, gherkin };
+export { ParameterType, gherkin };

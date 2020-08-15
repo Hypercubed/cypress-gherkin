@@ -16,7 +16,7 @@ describe('errors', () => {
   });
 });
 
-// Given('{airport} is closed because of a strike', function (airport: any) {
+// Given('{airport} is closed because of a strike', (_airport: any) => {
 //   throw new Error('Should not be called because airport type not defined')
 // });
 
