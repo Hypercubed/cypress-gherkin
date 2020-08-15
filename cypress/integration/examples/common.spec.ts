@@ -3,7 +3,7 @@ import '../../support/gherkin-steps/common';
 
 gherkin(
   `
-    Feature: Using common phases in Gherkin text
+    Feature: Using common phrases in Gherkin text
       Scenario: First person
         Given I visit "https://example.cypress.io"
           And I see "Cypress" in the title
@@ -28,7 +28,7 @@ gherkin(
 
 // ** OR  **
 
-feature('Using common phases in Gherkin style', () => {
+feature('Using common phrases in Gherkin style', () => {
   scenario('First person', () => {
     given('I visit "https://example.cypress.io"');
       and('I see "Cypress" in the title');
