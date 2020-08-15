@@ -12,3 +12,5 @@ yarn.lock
 
 cypress/videos/
 cypress/screenshots/
+
+temp/

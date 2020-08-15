@@ -9,7 +9,7 @@ Enable a Gherkin-like syntax for tests in Cypress.io.
 ## Installation
 
 ```bash
-npm i --save-dev cypress-gherkin
+npm i --save-dev @hypercubed/cypress-gherkin
 ```
 
 ## Usage
