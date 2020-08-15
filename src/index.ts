@@ -33,7 +33,11 @@ export const outline = (name: string, method: any, _example: any[]) => {
   });
 };
 
-export const scenarioOutline = (name: string, method: any, ...examples: any[]) => {
+export const scenarioOutline = (
+  name: string,
+  method: any,
+  ...examples: any[]
+) => {
   describe(name || '', () => {
     examples.forEach((_example, i) => {
       let _name = '' + i;
