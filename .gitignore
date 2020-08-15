@@ -11,3 +11,4 @@ coverage
 yarn.lock
 
 cypress/videos/
+cypress/screenshots/

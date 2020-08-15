@@ -13,7 +13,7 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
     let args = resolved.expression
       .match(text)
       .map((match) => match.getValue(null));
-    
+
     if (_args && _args.length) {
       args = args.concat(_args);
     }
