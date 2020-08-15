@@ -1,6 +1,6 @@
 {
   "name": "@hypercubed/cypress-gherkin",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Gherkin syntax in Cypress",
   "main": "build/main/index.js",
   "module": "build/module/index.js",
