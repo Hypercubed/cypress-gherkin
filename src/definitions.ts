@@ -10,7 +10,7 @@ type Matcher = string | RegExp;
 
 type AnyFunction = (...args: any[]) => any;
 
-interface StepOptions {
+export interface StepOptions {
   log: boolean;
 }
 
