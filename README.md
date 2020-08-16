@@ -37,7 +37,7 @@ describe('My First Test', () => {
 We can then import `feature` and `scenario` from `cypress-gherkin`.  `feature` and `scenario` are aliases for `describe` and `it` respectively.
 
 ```ts
-import { feature, scenario } from 'cypress-gherkin';
+import { feature, scenario } from '@hypercubed/cypress-gherkin';
 
 feature('My First Test', () => {
   scenario('Navigates on click', () => {
@@ -57,7 +57,7 @@ feature('My First Test', () => {
 To use Gherkin syntax we need to add `Given`, `When`, `Then` step definitions and replace the test sequences with matching `given`, `when`, `then` steps.  See [Gherkin Reference](https://cucumber.io/docs/gherkin/reference/) for more information on the Gherkin syntax itself.
 
 ```ts
-import { feature, scenario, Given, When, Then, given, when, then } from 'cypress-gherkin';
+import { feature, scenario, Given, When, Then, given, when, then } from '@hypercubed/cypress-gherkin';
 
 Given('a user visits {string}', (s: string) => {
   return cy.visit(s);
@@ -101,7 +101,7 @@ This cypress test, now written in Gherkin syntax, will run similar to before.  I
 Finally, as a bonus, you can use Gherkin text directly:
 
 ```ts
-import { feature, scenario, Given, When, Then, gherkin } from 'cypress-gherkin';
+import { feature, scenario, Given, When, Then, gherkin } from '@hypercubed/cypress-gherkin';
 
 Given('a user visits {string}', (s: string) => {
   return cy.visit(s);
