@@ -14,7 +14,7 @@ npm i --save-dev @hypercubed/cypress-gherkin
 
 ## Usage
 
-`cypress-gherkin` is not a preprocessor and, therefore, doesn't support cucumber feature and step definition files (see [Credits and alternatives](#Credits-and-alternatives) if that is what you want).  Instead `cypress-gherkin` is designed to work with and alongside existing cypress tests.
+`cypress-gherkin` is not a preprocessor and, therefore, doesn't support cucumber feature and step definition files (see [Credits and alternatives](#Credits-and-alternatives) if that is what you want).  Instead `cypress-gherkin` is designed to work with and alongside existing Cypress tests.
 
 By way of example let's start with a simple existing cypress test:
 
@@ -34,7 +34,7 @@ describe('My First Test', () => {
 });
 ```
 
-We can then import `feature` and `scenario` from `cypress-gherkin`.  `feature` and `scenario` are aliases for `describe` and `it` respectively.
+We can import `feature` and `scenario` from `cypress-gherkin`.  `feature` and `scenario` are aliases for `describe` and `it` respectively.
 
 ```ts
 import { feature, scenario } from '@hypercubed/cypress-gherkin';
@@ -155,7 +155,7 @@ describe('Gherkin syntax mixed with Cypress', () => {
   feature('a feature', () => {
     beforeEach(() => {
       given('a user visits "https://example.cypress.io/commands/actions"');
-      and('they type "fake@email.com" into the ".action-email" input');
+        and('they type "fake@email.com" into the ".action-email" input');
     });
 
     it('Types and asserts', () => {
