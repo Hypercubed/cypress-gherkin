@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Gherkin compile",
+			"type": "shell",
+			"command": "cat ${file} | node ./bin/transform.js > ${file}.ts",
+			"problemMatcher": [],
+			"presentation": {
+        "reveal": "silent"
+      }
+		}
+	]
+}

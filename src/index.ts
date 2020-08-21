@@ -1,6 +1,8 @@
 import { Step, ParameterType } from './definitions';
 import { execute, gherkin } from './runner';
 
+export { transform } from './transform';
+
 export const Given = Step.bind(null, 'Given');
 export const When = Step.bind(null, 'When');
 export const Then = Step.bind(null, 'Then');

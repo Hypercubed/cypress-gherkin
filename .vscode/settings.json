@@ -11,7 +11,8 @@
     "!javascript",
     "!json",
     "!jsonc",
-    "!typescript"
+    "!typescript",
+    "!typescriptreact"
   ]
   // "typescript.implementationsCodeLens.enabled": true
   // "typescript.referencesCodeLens.enabled": true
