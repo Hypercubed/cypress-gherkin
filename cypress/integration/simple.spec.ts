@@ -75,7 +75,7 @@ feature('Calls steps', () => {
     beforeEach(() => {
       cy.stub(window, 'describe', (_name, fn) => fn()).as('describe');
       cy.stub(window, 'it', (_name, fn) => fn()).as('it');
-      cy.stub(window, 'beforeEach', (fn) => fn()).as('beforeEach');
+      cy.stub(window, 'beforeEach', (_name, fn) => fn()).as('beforeEach');
     });
 
     it('runs simple gherkin text', () => {
