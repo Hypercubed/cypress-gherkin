@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, gherkin, given, when, then, outline, scenarioOutline } from '../../../src/index';
+import { Given, When, Then, feature, scenario, gherkin, given, when, then, outline, scenarioOutline, examples } from '../../../src/index';
 
 let count: number;
 
@@ -16,7 +16,7 @@ Then('I should have {int} cucumbers', (expectedCount: number) => {
 
 gherkin(`
 
-  Feature: Examples Tables
+  Feature: Examples Tables in Gherkin text
     Sometimes it can be desireable to run the same scenario multiple times
     with different data each time. This can be done by placing an Examples
     section with an Examples Table underneath a Scenario, and use <placeholders>
@@ -67,47 +67,24 @@ feature('Examples Tables in Gherkin syntax', () => {
   });
 });
 
-feature('Examples Tables in Gherkin outline', () => {
-  const template = ({start, eat, left}: any) => {
-    given(`there are ${start} cucumbers`);
-    when(`I eat ${eat} cucumbers`);
-    then(`I should have ${left} cucumbers`);
-  };
-
-  describe(`eating cucumbers`, () => { 
-    outline(`These are passing`, template, [
-      ['start', 'eat', 'left'],
-      [12,       5,    7],
-      [20,       5,    15]
-    ]);
-
-    outline(`These are also passing`, template, [
-      ['start', 'eat', 'left'],
-      [12,       5,    7],
-      [20,       5,    15]
-    ]);
-  });
-});
-
 feature('Examples Tables in Gherkin syntax using scenarioOutline', () => {
-  scenarioOutline(`eating cucumbers`, ({start, eat, left}: any) => {
-    given(`there are ${start} cucumbers`);
-    when(`I eat ${eat} cucumbers`);
-    then(`I should have ${left} cucumbers`);
-  },
-    [
-      'These are passing',
+  scenarioOutline(`eating cucumbers`, () => {
+    outline(({start, eat, left}: any) => {
+      given(`there are ${start} cucumbers`);
+      when(`I eat ${eat} cucumbers`);
+      then(`I should have ${left} cucumbers`);
+    });
+
+    examples('These are passing', [
       ['start', 'eat', 'left'],
       [12,       5,    7],
       [20,       5,    15]
-    ],
-    [
-      'These are also passing',
+    ]);
+
+    examples('These are also passing', [
       ['start', 'eat', 'left'],
       [22,       5,    17],
       [10,       5,     5]
-    ]
-  );
+    ]);
+  });
 });
-
-

@@ -19,33 +19,35 @@ export const then = execute.bind(null, 'Then');
 export const and = execute.bind(null, 'And');
 export const but = execute.bind(null, 'But');
 
-export const outline = (name: string, method: any, _example: any[]) => {
-  const heading = _example.splice(0, 1)[0];
-  const props: any = {};
+export const scenarioOutline = describe;
+export const scenarioTemplate = describe;
 
-  it(name || '', () => {
-    _example.forEach((row: any) => {
-      heading.forEach((key: string, i: number) => {
-        props[key] = row[i];
-      });
-      method(props);
-    });
+export const outline = (fn: any) => {
+  beforeEach(() => {
+    cy.wrap(fn).as('cypress_gherkin_template');
   });
 };
 
-export const scenarioOutline = (
-  name: string,
-  method: any,
-  ...examples: any[]
-) => {
+export const template = outline;
+
+const examplesToHash = (_example: any[][]) => {
+  const heading = _example.splice(0, 1)[0];
+  return _example.map((row: any) => {
+    return heading.reduce((acc: Record<string, any>, key: string, i: number) => {
+      acc[key] = row[i];
+      return acc;
+    }, {});
+  });
+}
+
+export const examples = (name: string, _example: any[]) => {
+  const hashs = examplesToHash(_example);
+
   describe(name || '', () => {
-    examples.forEach((_example, i) => {
-      let _name = '' + i;
-      if (typeof _example[0] === 'string') {
-        _name = _example[0];
-        _example = _example.slice(1);
-      }
-      outline(_name, method, _example);
+    hashs.forEach((hash, index) => {
+      it(`example #${index + 1}`, function () {
+        return this.cypress_gherkin_template(hash);
+      });
     });
   });
 };

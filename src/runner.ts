@@ -68,29 +68,36 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
 
 const walker = new Walker({
   visitFeature(feature, next) {
-    return describe(feature.name || '', next);
+    describe(feature.name || '', next);
   },
   visitStep(step) {
     const args = [step.dataTable, step.docString].filter((e) => e);
     return execute(step.keyword || '*', step.text || '', ...args);
   },
   visitBackground(background, next) {
-    return beforeEach(background.name || '', next);
+    beforeEach(background.name || '', () => {
+      next()
+    });
   },
   visitExample(_row, next) {
-    return next();
+    next();
   },
   visitExamples(examples, next) {
-    return it(examples.name || '', next);
+    it(examples.name || '', () => {
+      next();
+    });
   },
   visitScenarioOutline(scenario, next) {
-    return describe(scenario.name || '', next);
+    describe(scenario.name || '', next);
   },
   visitScenario(scenario, next) {
-    return it(scenario.name || '', next);
+    // Note: must no return anything (see https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-invoked-one-or-more-cy-commands-but-returned-a-different-value)
+    it(scenario.name || '', () => {
+      next();
+    });
   },
   visitRule(rule, next) {
-    return describe(rule.name || '', next);
+    describe(rule.name || '', next);
   }
 });
 
