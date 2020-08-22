@@ -71,40 +71,41 @@ const printFunction = (name: string | null | undefined, type: string, body: stri
 }
 
 const walker = new Walker({
-  visitFeature(feature, next) {
+  visitFeature(feature, _index, _parent, next) {
     imports.add('feature');
     return printFunction(feature.name, 'feature', next().join('\n'));
   },
-  visitBackground(background, next) {
+  visitBackground(background, _index, _parent, next) {
     imports.add('background');
     return printFunction(background.name, 'background', next().join('\n'));
   },
-  visitScenario(scenario, next) {
+  visitScenario(scenario, _index, _parent, next) {
     imports.add('scenario');
     return printFunction(scenario.name, 'scenario', next().join('\n'));
   },
-  visitRule(rule, next) {
+  visitRule(rule, _index, _parent, next) {
     imports.add('rule');
     return printFunction(rule.name, 'rule', next().join('\n'));
   },
-  visitScenarioOutline(scenario, next) {
+  visitScenarioOutline(scenario, _index, _parent, next) {
     imports.add('scenarioOutline');
     return printFunction(scenario.name, 'scenarioOutline', next().join('\n'));
   },
-  visitExamples(examples, next) {
+  visitExamples(examples, _index, _parent, next) {
     imports.add('scenarioOutline');
     return printFunction(examples.name, 'scenarioOutline', next().join('\n'));
   },
-  visitExample(_example, next) {
+  visitExample(_example, _index, _parent, next) {
     imports.add('scenario');
     return printFunction('example', 'scenario', next().join('\n'));
   },
-  visitStep(step, index: number, steps) {
+  visitStep(step, index, parent) {
     let type = (step.keyword || 'Given').trim();
+    const steps = parent.steps || null;
 
     let _type = type;
     let i = index;  // find previous step that's not an "and" or "but"
-    while (i > 0 && (_type === 'And' || _type === 'But')) {
+    while (steps && i > 0 && (_type === 'And' || _type === 'But')) {
       _type = (steps[--i].keyword || 'Given').trim();
     }
     

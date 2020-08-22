@@ -67,36 +67,36 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
 };
 
 const walker = new Walker({
-  visitFeature(feature, next) {
+  visitFeature(feature, _index, _parent, next) {
     describe(feature.name || '', next);
   },
-  visitStep(step) {
+  visitStep(step, _index, _parent) {
     const args = [step.dataTable, step.docString].filter((e) => e);
     return execute(step.keyword || '*', step.text || '', ...args);
   },
-  visitBackground(background, next) {
+  visitBackground(background, _index, _parent, next) {
     beforeEach(background.name || '', () => {
       next()
     });
   },
-  visitExample(_row, next) {
+  visitExample(_row, _index, _parent, next) {
     next();
   },
-  visitExamples(examples, next) {
+  visitExamples(examples, _index, _parent, next) {
     it(examples.name || '', () => {
       next();
     });
   },
-  visitScenarioOutline(scenario, next) {
+  visitScenarioOutline(scenario, _index, _parent, next) {
     describe(scenario.name || '', next);
   },
-  visitScenario(scenario, next) {
+  visitScenario(scenario, _index, _parent, next) {
     // Note: must no return anything (see https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-invoked-one-or-more-cy-commands-but-returned-a-different-value)
     it(scenario.name || '', () => {
       next();
     });
   },
-  visitRule(rule, next) {
+  visitRule(rule, _index, _parent, next) {
     describe(rule.name || '', next);
   }
 });
