@@ -2,8 +2,8 @@ CHANGELOG
 =========
 
 ## HEAD (Unreleased)
-* Improved Scenario Outline syntax
-* Add transform cli
+* Breaking: Improved Scenario Outline syntax
+* Feature: Add transform CLI
 
 
 ---
