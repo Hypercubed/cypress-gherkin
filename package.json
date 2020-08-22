@@ -50,5 +50,6 @@
   "bugs": {
     "url": "https://github.com/Hypercubed/cypress-gherkin/issues"
   },
-  "homepage": "https://github.com/Hypercubed/cypress-gherkin#readme"
+  "homepage": "https://github.com/Hypercubed/cypress-gherkin#readme",
+  "bin": "./bin/transform"
 }
