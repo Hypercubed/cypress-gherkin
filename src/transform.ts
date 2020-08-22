@@ -63,27 +63,41 @@ function indent(s: string) {
   return '  ' + s.trim().split('\n').join('\n  ') + '\n';
 }
 
-const printFunction = (name: string | null | undefined, type: string, next: any) => {
-  imports.add(type);
-
+const printFunction = (name: string | null | undefined, type: string, body: string) => {
   let s = name ? `${type}('${name}', () => {\n` : `${type}(() => {\n`;
-  s += indent(next().join('\n'));
+  s += indent(body);
   s += `});\n`;
   return s;
 }
 
 const walker = new Walker({
   visitFeature(feature, next) {
-    return printFunction(feature.name, 'feature', next);
+    imports.add('feature');
+    return printFunction(feature.name, 'feature', next().join('\n'));
   },
   visitBackground(background, next) {
-    return printFunction(background.name, 'background', next);
+    imports.add('background');
+    return printFunction(background.name, 'background', next().join('\n'));
   },
   visitScenario(scenario, next) {
-    return printFunction(scenario.name, 'scenario', next);
+    imports.add('scenario');
+    return printFunction(scenario.name, 'scenario', next().join('\n'));
   },
   visitRule(rule, next) {
-    return printFunction(rule.name, 'rule', next);
+    imports.add('rule');
+    return printFunction(rule.name, 'rule', next().join('\n'));
+  },
+  visitScenarioOutline(scenario, next) {
+    imports.add('scenarioOutline');
+    return printFunction(scenario.name, 'scenarioOutline', next().join('\n'));
+  },
+  visitExamples(examples, next) {
+    imports.add('scenarioOutline');
+    return printFunction(examples.name, 'scenarioOutline', next().join('\n'));
+  },
+  visitExample(_example, next) {
+    imports.add('scenario');
+    return printFunction('example', 'scenario', next().join('\n'));
   },
   visitStep(step, index: number, steps) {
     let type = (step.keyword || 'Given').trim();

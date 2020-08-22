@@ -37,5 +37,11 @@ describe('transforms', () => {
     });
   });
 
-  it('ScenarioOutline');
+  it('ScenarioOutline', () => {
+    cy.fixture('outline.feature').should(text => {
+      cy.fixture('outline.feature.ts').should(script => {
+        expectEqualByLine(transform(text), script);
+      });
+    });
+  });
 });
