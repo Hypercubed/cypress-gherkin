@@ -33,12 +33,15 @@ export const template = outline;
 const examplesToHash = (_example: any[][]) => {
   const heading = _example.splice(0, 1)[0];
   return _example.map((row: any) => {
-    return heading.reduce((acc: Record<string, any>, key: string, i: number) => {
-      acc[key] = row[i];
-      return acc;
-    }, {});
+    return heading.reduce(
+      (acc: Record<string, any>, key: string, i: number) => {
+        acc[key] = row[i];
+        return acc;
+      },
+      {}
+    );
   });
-}
+};
 
 export const examples = (name: string, _example: any[]) => {
   const hashs = examplesToHash(_example);

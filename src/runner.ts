@@ -76,7 +76,7 @@ const walker = new Walker({
   },
   visitBackground(background, _index, _parent, next) {
     beforeEach(background.name || '', () => {
-      next()
+      next();
     });
   },
   visitExample(_row, _index, _parent, next) {
@@ -98,7 +98,7 @@ const walker = new Walker({
   },
   visitRule(rule, _index, _parent, next) {
     describe(rule.name || '', next);
-  }
+  },
 });
 
 export const gherkin = (text: string) => {
