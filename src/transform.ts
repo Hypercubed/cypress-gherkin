@@ -6,17 +6,8 @@ import {
   ParameterType
 } from '@cucumber/cucumber-expressions';
 
-import { messages } from '@cucumber/messages';
-
 import { Incrementing } from './utils';
 import { Walker } from './ast-walker';
-
-// type GherkinDocument = messages.IGherkinDocument;
-type Feature = messages.GherkinDocument.Feature;
-type Rule = messages.GherkinDocument.Feature.FeatureChild.IRule;
-type Scenario = messages.GherkinDocument.Feature.IScenario;
-type Background = messages.GherkinDocument.Feature.IBackground;
-type Step = messages.GherkinDocument.Feature.IStep;
 
 const parameterTypeRegistry = new ParameterTypeRegistry();
 const cucumberExpressionGenerator = new CucumberExpressionGenerator(parameterTypeRegistry);
@@ -72,44 +63,29 @@ function indent(s: string) {
   return '  ' + s.trim().split('\n').join('\n  ') + '\n';
 }
 
-const printFunctionOpen = (type: string, name?: string | null): string => {
-  return name ? `${type}('${name}', () => {\n` : `${type}(() => {\n`;
+const printFunction = (name: string | null | undefined, type: string, next: any) => {
+  imports.add(type);
+
+  let s = name ? `${type}('${name}', () => {\n` : `${type}(() => {\n`;
+  s += indent(next().join('\n'));
+  s += `});\n`;
+  return s;
 }
 
 const walker = new Walker({
-  visitFeature: (feature: Feature, children: any[]) => {
-    imports.add('feature');
-
-    let s = printFunctionOpen('feature', feature.name);
-    s += indent(children.join('\n'));
-    s += `});\n`;
-    return s;
+  visitFeature(feature, next) {
+    return printFunction(feature.name, 'feature', next);
   },
-  visitBackground(background: Background, steps: any[]) {
-    imports.add('background');
-
-    let s = printFunctionOpen('background', background.name);
-    s += indent(steps.join('\n'));
-    s += `});\n`;
-    return s;
+  visitBackground(background, next) {
+    return printFunction(background.name, 'background', next);
   },
-  visitScenario(scenario: Scenario, steps: any[]) {
-    imports.add('scenario');
-
-    let s = printFunctionOpen('scenario', scenario.name);
-    s += indent(steps.join('\n'));
-    s += `});\n`;
-    return s;
+  visitScenario(scenario, next) {
+    return printFunction(scenario.name, 'scenario', next);
   },
-  visitRule(rule: Rule, children: any[]) {
-    imports.add('rule');
-    
-    let s = printFunctionOpen('rule', rule.name);
-    s += indent(children.join('\n'));
-    s += `});\n`;
-    return s;
+  visitRule(rule, next) {
+    return printFunction(rule.name, 'rule', next);
   },
-  visitStep(step: Step, index: number, steps: Step[]) {
+  visitStep(step, index: number, steps) {
     let type = (step.keyword || 'Given').trim();
 
     let _type = type;

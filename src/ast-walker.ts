@@ -7,27 +7,30 @@ type Scenario = messages.GherkinDocument.Feature.IScenario;
 type Background = messages.GherkinDocument.Feature.IBackground;
 type Step = messages.GherkinDocument.Feature.IStep;
 type Examples = messages.GherkinDocument.Feature.Scenario.IExamples;
+type TableRow = messages.GherkinDocument.Feature.ITableRow;
+
+type NextFunction = () => any;
 
 interface Visitors {
-  visitFeature: (feature: Feature, children: any[]) => any,
+  visitFeature: (feature: Feature, next: NextFunction) => any,
   visitStep: (step: Step, index: number, steps: Step[]) => any,
-  visitBackground: (background: Background, steps: any[]) => any,
-  visitExample: (steps: any[]) => any,
-  visitExamples: (examples: Examples, children: any[]) => any,
-  visitScenarioOutline: (scenario: Scenario, examples: any[]) => any,
-  visitScenario: (scenario: Scenario, steps: any[]) => any,
-  visitRule: (rule: Rule, children: any[]) => any,
+  visitBackground: (background: Background, next: NextFunction) => any,
+  visitExample: (row: TableRow, next: NextFunction) => any,
+  visitExamples: (examples: Examples, next: NextFunction) => any,
+  visitScenarioOutline: (scenario: Scenario, next: NextFunction) => any,
+  visitScenario: (scenario: Scenario, next: NextFunction) => any,
+  visitRule: (rule: Rule, next: NextFunction) => any,
 }
 
 const DEFAULT_VISITORS: Visitors = {
-  visitFeature: (_feature: Feature, _children: any[]) => null,
-  visitStep: (_step: Step, _index: number, _steps: Step[]) => null,
-  visitBackground: (_background: Background, _steps: any[]) => null,
-  visitExample: (_steps: any[]) => null,
-  visitExamples: (_examples: Examples, _children: any[]) => null,
-  visitScenarioOutline: (_scenario: Scenario, _examples: any[]) => null,
-  visitScenario: (_scenario: Scenario, _steps: any[]) => null,
-  visitRule: (_rule: Rule, _children: any[]) => null,
+  visitFeature: (_feature, _next) => null,
+  visitStep: (_step, _index, _steps) => null,
+  visitBackground: (_background, _next) => null,
+  visitExample: (_row, _next) => null,
+  visitExamples: (_examples: Examples, _next) => null,
+  visitScenarioOutline: (_scenario: Scenario, _next) => null,
+  visitScenario: (_scenario: Scenario, _next) => null,
+  visitRule: (_rule: Rule, _next) => null,
 };
 
 export class Walker {
@@ -45,7 +48,7 @@ export class Walker {
   }
 
   private walkFeature(feature: Feature) {
-    const children = feature.children.map(child => {
+    const next = () => feature.children.map(child => {
       if (child.rule) {
         return this.walkRule(child.rule);
       }
@@ -58,11 +61,11 @@ export class Walker {
       return null;
     });
 
-    return this.visitors.visitFeature(feature, children);
+    return this.visitors.visitFeature(feature, next);
   }
 
   private walkRule(rule: Rule) {
-    const children = (rule.children || []).map(child => {
+    const next = () => (rule.children || []).map(child => {
       if (child.scenario) {
         return this.walkScenario(child.scenario);
       }
@@ -72,25 +75,26 @@ export class Walker {
       return null;
     });
 
-    return this.visitors.visitRule(rule, children);
+    return this.visitors.visitRule(rule, next);
   }
 
   private walkScenario(scenario: Scenario) {
     if (scenario.examples && scenario.examples.length) {
-      const examples = (scenario.examples || []).map(_examples => {
+      const _next = () => (scenario.examples || []).map(_examples => {
         return this.walkExamples(_examples, scenario);
       });
 
-      return this.visitors.visitScenarioOutline(scenario, examples);
+      return this.visitors.visitScenarioOutline(scenario, _next);
     }
-    const steps = (scenario.steps || []).map((step, index, _steps) => this.walkStep(step, index, _steps));
-    return this.visitors.visitScenario(scenario, steps);
+
+    const next = () => (scenario.steps || []).map((step, index, _steps) => this.walkStep(step, index, _steps));
+    return this.visitors.visitScenario(scenario, next);
   }
 
   private walkExamples(examples: Examples, scenario: Scenario) {
     const tableHeaderRegex = (examples.tableHeader?.cells || []).map((cell: any) => new RegExp(`<${cell.value}>`, 'g'));
 
-    const children = (examples.tableBody || []).map(tableRow => {
+    const next = () => (examples.tableBody || []).map(tableRow => {
       const values = (tableRow.cells || []).map((cell: any) => cell.value);
       const _steps = (scenario.steps || []).map(step => {
         let { text } = step;
@@ -103,16 +107,16 @@ export class Walker {
         };
       });
 
-      const steps = (_steps || []).map((step, index) => this.walkStep(step, index, _steps));
-      return this.visitors.visitExample(steps);
+      const _next = () => (_steps || []).map((step, index) => this.walkStep(step, index, _steps));
+      return this.visitors.visitExample(tableRow, _next);
     });
 
-    return this.visitors.visitExamples(examples, children);
+    return this.visitors.visitExamples(examples, next);
   }
 
   private walkBackground(background: Background) {
-    const steps = (background.steps || []).map((step, index, _steps) => this.walkStep(step, index, _steps));
-    return this.visitors.visitBackground(background, steps);
+    const next = () => (background.steps || []).map((step, index, _steps) => this.walkStep(step, index, _steps));
+    return this.visitors.visitBackground(background, next);
   }
 
   private walkStep(step: Step, index: number, steps: Step[]) {

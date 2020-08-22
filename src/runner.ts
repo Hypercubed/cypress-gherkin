@@ -1,6 +1,5 @@
 import Parser from '@cucumber/gherkin/dist/src/Parser';
 import AstBuilder from '@cucumber/gherkin/dist/src/AstBuilder';
-import { messages } from '@cucumber/messages';
 
 import { Incrementing, isJquery, getElements } from './utils';
 import { resolve, generateHint } from './definitions';
@@ -67,118 +66,35 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
   }
 };
 
-// const gherkinDoStep = (step: any) => {
-//   const args = [step.dataTable, step.docString].filter((e) => e);
-//   execute(step.keyword, step.text, ...args);
-// };
-
-const gherkinOutline = (scenario: any) => {
-  describe(scenario.name || '', () => {
-    scenario.examples.forEach((example: any) => {
-      const tableHeaderRegex = example.tableHeader.cells.map(
-        (cell: any) => new RegExp(`<${cell.value}>`, 'g')
-      ); // TODO: escape value
-
-      it(example.name || '', () => {
-        example.tableBody.forEach((tableRow: any) => {
-          const values = tableRow.cells.map((cell: any) => cell.value);
-
-          scenario.steps.forEach((step: any) => {
-            let { text } = step;
-
-            tableHeaderRegex.forEach((re: RegExp, i: number) => {
-              text = text.replace(re, values[i]);
-            });
-
-            gherkinDoStep({
-              ...step,
-              text,
-            });
-          });
-        });
-      });
-    });
-  });
-};
-
-// const gherkinChild = (child: any) => {
-//   const type = child.value;
-
-//   switch (type) {
-//     case 'feature':
-//     case 'rule':
-//       describe(child[type].name || '', () => {
-//         child.rule.children.forEach(gherkinChild);
-//       });
-//       break;
-//     case 'scenario':
-//       if (child.scenario.examples && child.scenario.examples.length) {
-//         gherkinOutline(child.scenario);
-//       } else {
-//         it(child.scenario.name || '', () => {
-//           child.scenario.steps.forEach(gherkinDoStep);
-//         });
-//       }
-//       break;
-//     case 'background':
-//       beforeEach(() => {
-//         child.background.steps.forEach(gherkinDoStep);
-//       });
-//       break;
-//   }
-// };
-
-// type GherkinDocument = messages.IGherkinDocument;
-type Feature = messages.GherkinDocument.Feature;
-type Rule = messages.GherkinDocument.Feature.FeatureChild.IRule;
-type Scenario = messages.GherkinDocument.Feature.IScenario;
-type Background = messages.GherkinDocument.Feature.IBackground;
-type Step = messages.GherkinDocument.Feature.IStep;
-type Examples = messages.GherkinDocument.Feature.Scenario.IExamples;
-
 const walker = new Walker({
-  visitFeature(feature: Feature, children: any[]) {
-    return () => describe(feature.name || '', () => {
-      children.forEach(fn => fn());
-    });
+  visitFeature(feature, next) {
+    return describe(feature.name || '', next);
   },
-  visitStep(step: Step) {
+  visitStep(step) {
     const args = [step.dataTable, step.docString].filter((e) => e);
-    return () => execute(step.keyword || '*', step.text || '', ...args);
+    return execute(step.keyword || '*', step.text || '', ...args);
   },
-  visitBackground(background: Background, steps: any[]) {
-    return () => beforeEach(background.name || '', () => {
-      steps.forEach(fn => fn());
-    });
+  visitBackground(background, next) {
+    return beforeEach(background.name || '', next);
   },
-  visitExample(steps: any[]) {
-    return () => {
-      steps.forEach(fn => fn());
-    };
+  visitExample(_row, next) {
+    return next();
   },
-  visitExamples(examples: Examples, children: any[]) {
-    return () => it(examples.name || '', () => {
-      children.forEach(fn => fn());
-    });
+  visitExamples(examples, next) {
+    return it(examples.name || '', next);
   },
-  visitScenarioOutline(scenario: Scenario, examples: any[]) {
-    return () => describe(scenario.name || '', () => {
-      examples.forEach(fn => fn());
-    });
+  visitScenarioOutline(scenario, next) {
+    return describe(scenario.name || '', next);
   },
-  visitScenario(scenario: Scenario, steps: any[]) {
-    return () => it(scenario.name || '', () => {
-      steps.forEach(fn => fn());
-    });
+  visitScenario(scenario, next) {
+    return it(scenario.name || '', next);
   },
-  visitRule(rule: Rule, children: any[]) {
-    return () => describe(rule.name || '', () => {
-      children.forEach(fn => fn());
-    });
+  visitRule(rule, next) {
+    return describe(rule.name || '', next);
   }
 });
 
 export const gherkin = (text: string) => {
   const ast = parser.parse(text);
-  walker.walk(ast)();
+  walker.walk(ast);
 };
