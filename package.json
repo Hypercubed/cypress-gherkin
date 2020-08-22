@@ -51,5 +51,5 @@
     "url": "https://github.com/Hypercubed/cypress-gherkin/issues"
   },
   "homepage": "https://github.com/Hypercubed/cypress-gherkin#readme",
-  "bin": "./bin/transform"
+  "bin": "./bin/transform.js"
 }
