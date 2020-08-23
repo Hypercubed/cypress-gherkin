@@ -150,7 +150,7 @@ const walker = new Walker({
 
     addDefinition(type, step.text || '');
 
-    type = type.toLowerCase();	
+    type = type.toLowerCase();
     imports.add(type);
     return `${type}('${step.text}');`;
   },
