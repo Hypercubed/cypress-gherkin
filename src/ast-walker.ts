@@ -39,17 +39,36 @@ const DEFAULT_VISITORS: Visitors = {
   visitRule: () => null,
 };
 
+const DEFAULT_OPTIONS = {
+  skip: false,
+  only: false
+};
+
 export class Walker {
+  public options = DEFAULT_OPTIONS;
+
+  protected readonly baseOptions = DEFAULT_OPTIONS;
   protected readonly visitors: Visitors;
 
-  constructor(visitors: Partial<Visitors>) {
+  constructor(visitors: Partial<Visitors>, options?: Partial<typeof DEFAULT_OPTIONS>) {
     this.visitors = {
       ...DEFAULT_VISITORS,
       ...visitors,
     };
+
+    this.baseOptions = {
+      ...DEFAULT_OPTIONS,
+      ...options,
+    }
   }
 
-  walk(ast: GherkinDocument) {
+  walk(ast: GherkinDocument, options?: Partial<typeof DEFAULT_OPTIONS>) {
+    this.options = {
+      ...DEFAULT_OPTIONS,
+      ...this.baseOptions,
+      ...options,
+    };
+
     return this.walkFeature(ast.feature as Feature, 0, ast);
   }
 

@@ -95,6 +95,14 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
 
 const walker = new Walker({
   visitFeature(feature, _index, _parent, next) {
+    if (walker.options.only) {
+      describe.only(feature.name || '', next);
+      return;
+    }
+    if (walker.options.skip) {
+      describe.skip(feature.name || '', next);
+      return;
+    }
     describe(feature.name || '', next);
   },
   visitStep(step, _index, _parent) {
@@ -103,7 +111,7 @@ const walker = new Walker({
   },
   visitBackground(background, _index, _parent, next) {
     beforeEach(background.name || '', () => {
-      next();
+      if (!walker.options.skip) next();
     });
   },
   visitExample(_row, _index, _parent, next) {
@@ -111,7 +119,7 @@ const walker = new Walker({
   },
   visitExamples(examples, _index, _parent, next) {
     it(examples.name || '', () => {
-      next();
+      if (!walker.options.skip) next();
     });
   },
   visitScenarioOutline(scenario, _index, _parent, next) {
@@ -120,7 +128,7 @@ const walker = new Walker({
   visitScenario(scenario, _index, _parent, next) {
     // Note: must no return anything (see https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-invoked-one-or-more-cy-commands-but-returned-a-different-value)
     it(scenario.name || '', () => {
-      next();
+      if (!walker.options.skip) next();
     });
   },
   visitRule(rule, _index, _parent, next) {
@@ -135,5 +143,10 @@ export const gherkin = (text: string) => {
 
 gherkin.skip = (text: string) => {
   const ast = parser.parse(text);
-  describe.skip(ast?.feature?.name || '', () => null);
+  walker.walk(ast, { skip: true });
+};
+
+gherkin.only = (text: string) => {
+  const ast = parser.parse(text);
+  walker.walk(ast, { only: true });
 };

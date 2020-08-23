@@ -28,18 +28,18 @@ gherkin.skip(
 
 // // ** OR  **
 
-feature.skip('My First Test (from Gherkin style)', () => {
-  scenario('Navigates on click', () => {
-    then('the URL should include "/commands/actions"');
-  });
+// feature.skip('My First Test (from Gherkin style)', () => {
+//   scenario('Navigates on click', () => {
+//     then('the URL should include "/commands/actions"');
+//   });
 
-  scenario('Types and asserts', () => {
-    given('a user visits "https://example.cypress.io/commands/actions"');
-  });
+//   scenario('Types and asserts', () => {
+//     given('a user visits "https://example.cypress.io/commands/actions"');
+//   });
 
-  scenario('Missing type', () => {
-    given('a {user} visits "https://example.cypress.io/commands/actions"');
-  });
-});
+//   scenario('Missing type', () => {
+//     given('a {user} visits "https://example.cypress.io/commands/actions"');
+//   });
+// });
 
 

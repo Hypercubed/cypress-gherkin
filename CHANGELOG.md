@@ -3,6 +3,7 @@ CHANGELOG
 
 ## HEAD (Unreleased)
 * Feature: Improved `scenarioOutline` ergonomics
+* Feature: Support `gherkin.skip` and `gherkin.only`
 
 
 ---
