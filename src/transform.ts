@@ -102,7 +102,6 @@ const walker = new Walker({
   },
   visitScenario(scenario, _index, _parent, next) {
     imports.add('scenario');
-    console.log(next());
     return printFunction(scenario.name, 'scenario', next().join('\n'));
   },
   visitRule(rule, _index, _parent, next) {

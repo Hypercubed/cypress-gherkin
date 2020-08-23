@@ -18,7 +18,6 @@
     "watch": "cypress open",
     "clean": "trash build test",
     "version": "chg release -y && git add -A CHANGELOG.md",
-    "prepublishOnly": "npm run build",
     "np": "np"
   },
   "author": "J. Harshbarger",
