@@ -37,7 +37,7 @@ describe('transforms', () => {
     });
   });
 
-  it('ScenarioOutline', () => {
+  it.only('ScenarioOutline', () => {
     cy.fixture('outline.feature').should(text => {
       cy.fixture('outline.feature.ts').should(script => {
         expectEqualByLine(transform(text), script);

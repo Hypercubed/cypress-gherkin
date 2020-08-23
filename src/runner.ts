@@ -14,7 +14,9 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
     // process aliases
     if (this.cypress_gherkin_hash) {
       const keys = Object.keys(this.cypress_gherkin_hash);
-      const keysRegex = keys.map((heading: string) => new RegExp(`<${heading}>`, 'g'));
+      const keysRegex = keys.map(
+        (heading: string) => new RegExp(`<${heading}>`, 'g')
+      );
 
       keys.forEach((key: string, i: number) => {
         const re = keysRegex[i];
@@ -36,9 +38,9 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
             Text: text,
             Suggestions: getSuggestions(_type.trim(), text),
             Test: this.test.clone(),
-            Spec: Cypress.spec
-          }
-        }
+            Spec: Cypress.spec,
+          };
+        },
       });
 
       throw new Error('Missing Gherkin statement');

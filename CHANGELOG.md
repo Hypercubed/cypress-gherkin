@@ -2,9 +2,10 @@ CHANGELOG
 =========
 
 ## HEAD (Unreleased)
-* Feature: Improved `scenarioOutline` ergonomics
+* Feature: Improved `scenarioOutline` syntax
+* Feature: Transform uses improved `scenarioOutline` syntax
 * Feature: Support `gherkin.skip` and `gherkin.only`
-
+* Feature: Even more improved Scenario Outline syntax
 
 ---
 

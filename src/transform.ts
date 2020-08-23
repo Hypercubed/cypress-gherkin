@@ -80,6 +80,17 @@ const printFunction = (
   return s;
 };
 
+const printExample = (
+  name: string | null | undefined,
+  type: string,
+  body: string
+) => {
+  let s = name ? `${type}('${name}', [\n` : `${type}([\n`;
+  s += indent(body);
+  s += `]);\n`;
+  return s;
+};
+
 const walker = new Walker({
   visitFeature(feature, _index, _parent, next) {
     imports.add('feature');
@@ -99,31 +110,47 @@ const walker = new Walker({
   },
   visitScenarioOutline(scenario, _index, _parent, next) {
     imports.add('scenarioOutline');
-    return printFunction(scenario.name, 'scenarioOutline', next().join('\n'));
+    imports.add('outline');
+    const steps = (scenario.steps || []).map((step) => {
+      const type = (step.keyword || 'Given').trim().toLowerCase();
+      imports.add(type);
+      return `${type}('${step.text}');`;
+    });
+    const outline = printFunction(null, 'outline', steps.join('\n'));
+    return printFunction(
+      scenario.name,
+      'scenarioOutline',
+      [outline, ...next()].join('\n')
+    );
   },
   visitExamples(examples, _index, _parent, next) {
-    imports.add('scenarioOutline');
-    return printFunction(examples.name, 'scenarioOutline', next().join('\n'));
+    imports.add('examples');
+    const header = examples.tableHeader?.cells?.map(
+      (cell: any) => `'${cell.value}'`
+    );
+    return printExample(
+      examples.name,
+      'examples',
+      `[${header?.join(', ')}],\n` + next().join(',\n')
+    );
   },
-  visitExample(_example, _index, _parent, next) {
-    imports.add('scenario');
-    return printFunction('example', 'scenario', next().join('\n'));
+  visitExample(tableRow, _index, _parent, next) {
+    const row = tableRow.cells?.map((cell: any) => cell.value);
+    next();
+    return `[${(row || []).join(', ')}]`;
   },
   visitStep(step, index, parent) {
     let type = (step.keyword || 'Given').trim();
     const steps = parent.steps || null;
 
-    let _type = type;
     let i = index; // find previous step that's not an "and" or "but"
-    while (steps && i > 0 && (_type === 'And' || _type === 'But')) {
-      _type = (steps[--i].keyword || 'Given').trim();
+    while (steps && i > 0 && (type === 'And' || type === 'But')) {
+      type = (steps[--i].keyword || 'Given').trim();
     }
 
-    addDefinition(_type, step.text || '');
-
-    type = type.toLowerCase();
     imports.add(type);
-    return `${type}('${step.text}');`;
+
+    addDefinition(type, step.text || '');
   },
 });
 

@@ -41,7 +41,7 @@ const DEFAULT_VISITORS: Visitors = {
 
 const DEFAULT_OPTIONS = {
   skip: false,
-  only: false
+  only: false,
 };
 
 export class Walker {
@@ -50,7 +50,10 @@ export class Walker {
   protected readonly baseOptions = DEFAULT_OPTIONS;
   protected readonly visitors: Visitors;
 
-  constructor(visitors: Partial<Visitors>, options?: Partial<typeof DEFAULT_OPTIONS>) {
+  constructor(
+    visitors: Partial<Visitors>,
+    options?: Partial<typeof DEFAULT_OPTIONS>
+  ) {
     this.visitors = {
       ...DEFAULT_VISITORS,
       ...visitors,
@@ -59,7 +62,7 @@ export class Walker {
     this.baseOptions = {
       ...DEFAULT_OPTIONS,
       ...options,
-    }
+    };
   }
 
   walk(ast: GherkinDocument, options?: Partial<typeof DEFAULT_OPTIONS>) {
@@ -77,8 +80,8 @@ export class Walker {
     index: number,
     parent: GherkinDocument
   ) {
-    const next = () =>
-      feature.children.map((child, i) => {
+    const next = () => {
+      return feature.children.map((child, i) => {
         if (child.rule) {
           return this.walkRule(child.rule, i, feature);
         }
@@ -90,13 +93,14 @@ export class Walker {
         }
         return null;
       });
+    };
 
     return this.visitors.visitFeature(feature, index, parent, next);
   }
 
   private walkRule(rule: Rule, index: number, parent: Feature) {
-    const next = () =>
-      (rule.children || []).map((child, i) => {
+    const next = () => {
+      return (rule.children || []).map((child, i) => {
         if (child.scenario) {
           return this.walkScenario(child.scenario, i, rule);
         }
@@ -105,6 +109,7 @@ export class Walker {
         }
         return null;
       });
+    };
 
     return this.visitors.visitRule(rule, index, parent, next);
   }
@@ -115,17 +120,21 @@ export class Walker {
     parent: Feature | Rule
   ) {
     if (scenario.examples && scenario.examples.length) {
-      const _next = () =>
-        (scenario.examples || []).map((examples, i) => {
-          return this.walkExamples(examples, i, scenario);
-        });
-
-      return this.visitors.visitScenarioOutline(scenario, index, parent, _next);
+      const examples = () =>
+        (scenario.examples || []).map((e, i) =>
+          this.walkExamples(e, i, scenario)
+        );
+      return this.visitors.visitScenarioOutline(
+        scenario,
+        index,
+        parent,
+        examples
+      );
     }
 
-    const next = () =>
-      (scenario.steps || []).map((step, i) => this.walkStep(step, i, scenario));
-    return this.visitors.visitScenario(scenario, index, parent, next);
+    const steps = () =>
+      (scenario.steps || []).map((s, i) => this.walkStep(s, i, scenario));
+    return this.visitors.visitScenario(scenario, index, parent, steps);
   }
 
   private walkExamples(examples: Examples, index: number, parent: Scenario) {
@@ -133,10 +142,10 @@ export class Walker {
       (cell: any) => new RegExp(`<${cell.value}>`, 'g')
     );
 
-    const next = () =>
-      (examples.tableBody || []).map((tableRow) => {
+    const next = () => {
+      return (examples.tableBody || []).map((tableRow) => {
         const values = (tableRow.cells || []).map((cell: any) => cell.value);
-        const _steps = (parent.steps || []).map((step) => {
+        const steps = (parent.steps || []).map((step) => {
           let { text } = step;
           tableHeaderRegex.forEach((re: RegExp, i: number) => {
             text = (text || '').replace(re, values[i]);
@@ -148,9 +157,10 @@ export class Walker {
         });
 
         const _next = () =>
-          (_steps || []).map((step, i) => this.walkStep(step, i, parent));
+          (steps || []).map((s, i) => this.walkStep(s, i, parent));
         return this.visitors.visitExample(tableRow, index, examples, _next);
       });
+    };
 
     return this.visitors.visitExamples(examples, index, parent, next);
   }
@@ -160,10 +170,12 @@ export class Walker {
     index: number,
     parent: Feature | Rule
   ) {
-    const next = () =>
-      (background.steps || []).map((step, i, _steps) =>
+    const next = () => {
+      return (background.steps || []).map((step, i, _steps) =>
         this.walkStep(step, i, background)
       );
+    };
+
     return this.visitors.visitBackground(background, index, parent, next);
   }
 
