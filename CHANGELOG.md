@@ -2,7 +2,7 @@ CHANGELOG
 =========
 
 ## HEAD (Unreleased)
-* Bug: Fix gherkin text transform CLI bugs
+* Bug: Fix transform CLI bugs
 
 ---
 

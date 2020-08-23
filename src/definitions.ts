@@ -63,13 +63,6 @@ export const getSuggestions = (type: string, text: string) => {
         `${type}('${example.source}', (${example.parameterNames}) => {});`
     )
     .join('\n');
-  //   return `Missing Gherkin statement: ${type} ${text}
-
-  // Suggestion(s):
-
-  // ${suggestions}
-
-  //   `;
 };
 
 export const ParameterType = ({
