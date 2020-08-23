@@ -30,7 +30,7 @@ feature('Calls steps', () => {
     cy.spy(steps, 'left').as('left');
   });
 
-  describe('gherkin text', () => {
+  describe.skip('Examples Tables in Gherkin text', () => {
     beforeEach(() => {
       cy.stub(window, 'describe', (_name, fn) => fn()).as('describe');
       cy.stub(window, 'it', (_name, fn) => fn()).as('it');
@@ -79,39 +79,63 @@ feature('Calls steps', () => {
     });
   });
 
-  feature('Examples Tables in Gherkin syntax using scenarioOutline', () => {
-    scenario(`eating cucumbers, simple`, () => {
-      given(`there are 24 cucumbers`);
-      when(`I eat 14 cucumbers`);
-      then(`I should have 10 cucumbers`);
+  describe('Examples Tables in Gherkin syntax using scenarioOutline', () => {
+    describe('using scenarioOutline and template literals', () => {
+      scenario(`eating cucumbers, simple`, () => {
+        given(`there are 24 cucumbers`);
+        when(`I eat 14 cucumbers`);
+        then(`I should have 10 cucumbers`);
 
-      cy.get('@start').should('calledWith', 24);
-      cy.get('@eat').should('calledWith', 14);
-      cy.get('@left').should('calledWith', 10);
-    });
-
-    scenarioOutline(`eating cucumbers`, () => {
-      outline(({start, eat, left}: any) => {
-        given(`there are ${start} cucumbers`);
-        when(`I eat ${eat} cucumbers`);
-        then(`I should have ${left} cucumbers`);
-        
-        cy.get('@start').should('calledWith', start);
-        cy.get('@eat').should('calledWith', eat);
-        cy.get('@left').should('calledWith', left);
+        cy.get('@start').should('calledWith', 24);
+        cy.get('@eat').should('calledWith', 14);
+        cy.get('@left').should('calledWith', 10);
       });
 
-      examples('These are passing', [
-        ['start', 'eat', 'left'],
-        [12,       5,    7],
-        [20,       5,    15]
-      ]);
+      scenarioOutline(`eating cucumbers`, () => {
+        outline(({start, eat, left}: any) => {
+          given(`there are ${start} cucumbers`);
+          when(`I eat ${eat} cucumbers`);
+          then(`I should have ${left} cucumbers`);
+          
+          cy.get('@start').should('calledWith', start);
+          cy.get('@eat').should('calledWith', eat);
+          cy.get('@left').should('calledWith', left);
+        });
 
-      examples('These are also passing', [
-        ['start', 'eat', 'left'],
-        [12,       5,    7],
-        [20,       5,    15]
-      ]);      
+        examples('These are passing', [
+          ['start', 'eat', 'left'],
+          [12,       5,    7],
+          [20,       5,    15]
+        ]);
+
+        examples('These are also passing', [
+          ['start', 'eat', 'left'],
+          [12,       5,    7],
+          [20,       5,    15]
+        ]);      
+      });
+    });
+
+    describe('using scenarioOutline', () => {
+      scenarioOutline(`eating cucumbers`, () => {
+        outline(() => {
+          given(`there are <start> cucumbers`);
+          when(`I eat <eat> cucumbers`);
+          then(`I should have <left> cucumbers`);
+        });
+  
+        examples('These are passing', [
+          ['start', 'eat', 'left'],
+          [12,       5,    7],
+          [20,       5,    15]
+        ]);
+  
+        examples('These are also passing', [
+          ['start', 'eat', 'left'],
+          [12,       5,    7],
+          [20,       5,    15]
+        ]);
+      });
     });
   });
 });

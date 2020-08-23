@@ -55,21 +55,21 @@ export const resolve = (_type: string, text: string) => {
   });
 };
 
-export const generateHint = (type: string, text: string) => {
+export const getSuggestions = (type: string, text: string) => {
   const examples = cucumberExpressionGenerator.generateExpressions(text);
-  const suggestions = examples
+  return examples
     .map(
       (example) =>
         `${type}('${example.source}', (${example.parameterNames}) => {});`
     )
     .join('\n');
-  return `Missing Gherkin statement: ${type} ${text}
+//   return `Missing Gherkin statement: ${type} ${text}
 
-Suggestion(s):
+// Suggestion(s):
 
-${suggestions}
+// ${suggestions}
 
-  `;
+//   `;
 };
 
 export const ParameterType = ({

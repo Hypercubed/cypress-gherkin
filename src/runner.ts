@@ -2,7 +2,7 @@ import Parser from '@cucumber/gherkin/dist/src/Parser';
 import AstBuilder from '@cucumber/gherkin/dist/src/AstBuilder';
 
 import { Incrementing, isJquery, getElements } from './utils';
-import { resolve, generateHint } from './definitions';
+import { resolve, getSuggestions } from './definitions';
 import { Walker } from './ast-walker';
 
 const nextId = Incrementing();
@@ -10,8 +10,40 @@ const nextId = Incrementing();
 const parser = new Parser(new AstBuilder(nextId));
 
 export const execute = (_type: string, text: string, ..._args: any[]) => {
-  const resolved = resolve(_type, text);
-  if (resolved) {
+  return cy.then(function () {
+    // process aliases
+    if (this.cypress_gherkin_hash) {
+      const keys = Object.keys(this.cypress_gherkin_hash);
+      const keysRegex = keys.map((heading: string) => new RegExp(`<${heading}>`, 'g'));
+
+      keys.forEach((key: string, i: number) => {
+        const re = keysRegex[i];
+        text = (text || '').replace(re, this.cypress_gherkin_hash[key]);
+      });
+    }
+
+    const resolved = resolve(_type, text);
+
+    if (!resolved) {
+      Cypress.log({
+        name: _type,
+        message: `${_type}, ${text}`,
+        // @ts-ignore
+        state: 'failed',
+        ended: true,
+        consoleProps: () => {
+          return {
+            Text: text,
+            Suggestions: getSuggestions(_type.trim(), text),
+            Test: this.test.clone(),
+            Spec: Cypress.spec
+          }
+        }
+      });
+
+      throw new Error('Missing Gherkin statement');
+    }
+
     let args = resolved.expression
       .match(text)
       .map((match) => match.getValue(null));
@@ -34,36 +66,31 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
 
     let log = resolved.options.log;
 
-    return cy.then(async () => {
-      if (log) {
-        log = Cypress.log({
-          name: _type,
-          message: `${_type}, ${text}`,
+    if (log) {
+      log = Cypress.log({
+        name: _type,
+        message: `${_type}, ${text}`,
+      });
+      log.snapshot('before', { at: 0 });
+    }
+
+    let value = fn.apply(null, args);
+    value = Cypress.isCy(value) ? value : Promise.resolve(value);
+
+    if (log) {
+      return value.then((val: any) => {
+        log.set({
+          consoleProps: consoleProps(val),
         });
-        log.snapshot('before', { at: 0 });
-      }
 
-      let value = fn.apply(null, args);
-      value = Cypress.isCy(value) ? value : Promise.resolve(value);
+        log.snapshot('after', { at: 1 });
 
-      if (log) {
-        return value.then((val: any) => {
-          log.set({
-            consoleProps: consoleProps(val),
-          });
+        return val;
+      });
+    }
 
-          log.snapshot('after', { at: 1 });
-
-          return val;
-        });
-      }
-
-      return value;
-    });
-  } else {
-    const err = new Error(generateHint(_type.trim(), text));
-    throw err;
-  }
+    return value;
+  });
 };
 
 const walker = new Walker({
@@ -104,4 +131,9 @@ const walker = new Walker({
 export const gherkin = (text: string) => {
   const ast = parser.parse(text);
   walker.walk(ast);
+};
+
+gherkin.skip = (text: string) => {
+  const ast = parser.parse(text);
+  describe.skip(ast?.feature?.name || '', () => null);
 };

@@ -23,8 +23,12 @@ export const scenarioOutline = describe;
 export const scenarioTemplate = describe;
 
 export const outline = (fn: any) => {
-  beforeEach(() => {
-    cy.wrap(fn).as('cypress_gherkin_template');
+  before(() => {
+    cy.wrap(fn, { log: false }).as('cypress_gherkin_template');
+  });
+
+  after(() => {
+    cy.wrap(undefined, { log: false }).as('cypress_gherkin_template');
   });
 };
 
@@ -46,10 +50,26 @@ const examplesToHash = (_example: any[][]) => {
 export const examples = (name: string, _example: any[]) => {
   const hashs = examplesToHash(_example);
 
+  before(() => {
+    cy.wrap(hashs, { log: false }).as('cypress_gherkin_hashs');
+  });
+
+  after(() => {
+    cy.wrap(undefined, { log: false }).as('cypress_gherkin_hashs');
+  });
+
   describe(name || '', () => {
     hashs.forEach((hash, index) => {
+      beforeEach(() => {
+        cy.wrap(hash, { log: false }).as('cypress_gherkin_hash');
+      });
+
       it(`example #${index + 1}`, function () {
         return this.cypress_gherkin_template(hash);
+      });
+
+      afterEach(() => {
+        cy.wrap(undefined, { log: false }).as('cypress_gherkin_hash');
       });
     });
   });
