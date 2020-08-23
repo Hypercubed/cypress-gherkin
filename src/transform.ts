@@ -143,12 +143,14 @@ const walker = new Walker({
     let type = (step.keyword || 'Given').trim();
     const steps = parent.steps || null;
 
-    let i = index; // find previous step that's not an "and" or "but"
-    while (steps && i > 0 && (type === 'And' || type === 'But')) {
-      type = (steps[--i].keyword || 'Given').trim();
-    }
+    imports.add(type.toLowerCase());
 
-    addDefinition(type, step.text || '');
+    let _type = type;
+    let i = index; // find previous step that's not an "and" or "but"
+    while (steps && i > 0 && (_type === 'And' || _type === 'But')) {
+      _type = (steps[--i].keyword || 'Given').trim();
+    }
+    addDefinition(_type, step.text || '');
 
     type = type.toLowerCase();
     imports.add(type);

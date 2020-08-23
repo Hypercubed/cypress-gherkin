@@ -1,4 +1,4 @@
-import { feature, scenario, Given, given, and, When, when, Then, then, but } from '@hypercubed/cypress-gherkin';
+import { feature, scenario, given, Given, and, when, When, then, Then, but } from '@hypercubed/cypress-gherkin';
 
 Given('a user visits {string}', (a: string) => {
 
