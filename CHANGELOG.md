@@ -2,9 +2,12 @@ CHANGELOG
 =========
 
 ## HEAD (Unreleased)
-* Bug: Fix transform CLI bugs
+_(none)_
 
 ---
+
+## 2.1.1 (2020-08-23)
+* Bug: Fix transform CLI bugs
 
 ## 2.1.0 (2020-08-23)
 * Feature: Improved `scenarioOutline` syntax
