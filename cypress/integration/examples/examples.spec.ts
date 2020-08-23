@@ -16,7 +16,7 @@ Then('I should have {int} cucumbers', (expectedCount: number) => {
 
 gherkin(`
 
-  Feature: Examples Tables in Gherkin text
+  Feature: Example Tables in Gherkin text
     Sometimes it can be desireable to run the same scenario multiple times
     with different data each time. This can be done by placing an Examples
     section with an Examples Table underneath a Scenario, and use <placeholders>
@@ -39,7 +39,7 @@ gherkin(`
 
 `);
 
-feature('Examples Tables in Gherkin syntax', () => {
+feature('Example Tables in Gherkin syntax', () => {
   describe(`eating cucumbers`, () => {
     const template = ([start, eat, left]: any[]) => {
       given(`there are ${start} cucumbers`);
@@ -67,12 +67,34 @@ feature('Examples Tables in Gherkin syntax', () => {
   });
 });
 
-feature('Examples Tables in Gherkin syntax using scenarioOutline', () => {
+feature('Example Tables in Gherkin syntax using scenarioOutline and template literals', () => {
   scenarioOutline(`eating cucumbers`, () => {
     outline(({start, eat, left}: any) => {
       given(`there are ${start} cucumbers`);
       when(`I eat ${eat} cucumbers`);
       then(`I should have ${left} cucumbers`);
+    });
+
+    examples('These are passing', [
+      ['start', 'eat', 'left'],
+      [12,       5,    7],
+      [20,       5,    15]
+    ]);
+
+    examples('These are also passing', [
+      ['start', 'eat', 'left'],
+      [22,       5,    17],
+      [10,       5,     5]
+    ]);
+  });
+});
+
+feature('Example Tables in Gherkin syntax using scenarioOutline without template literals', () => {
+  scenarioOutline(`eating cucumbers`, () => {
+    outline(() => {
+      given('there are <start> cucumbers');
+      when('I eat <eat> cucumbers');
+      then('I should have <left> cucumbers');
     });
 
     examples('These are passing', [

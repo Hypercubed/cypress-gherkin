@@ -216,7 +216,7 @@ As described above `scenario` is simply an alias for `it`.  However, `scenarioOu
 For example, one my translate the following Gherkin text:
 
 ```feature
-Feature: Examples Tables in Gherkin text
+Feature: Example Tables
 
   Scenario Outline: eating cucumbers
     Given there are <start> cucumbers
@@ -237,16 +237,12 @@ Feature: Examples Tables in Gherkin text
 to the gherkin-syntax:
 
 ```ts
-feature('Examples Tables in Gherkin text', () => {
+feature('Examples Tables in Gherkin syntax', () => {
   scenarioOutline(`eating cucumbers`, () => {
-    outline(({start, eat, left}: any) => {
-      given(`there are ${start} cucumbers`);
-      when(`I eat ${eat} cucumbers`);
-      then(`I should have ${left} cucumbers`);
-      
-      cy.get('@start').should('calledWith', start);
-      cy.get('@eat').should('calledWith', eat);
-      cy.get('@left').should('calledWith', left);
+    outline(() => {
+      given('there are <start> cucumbers');
+      when('I eat <eat> cucumbers');
+      then('I should have <left> cucumbers');
     });
 
     examples('These are passing', [
@@ -267,31 +263,30 @@ feature('Examples Tables in Gherkin text', () => {
 which is functionally equivalent to:
 
 ```ts
-
 feature('Examples Tables in Gherkin text', () => {
-  scenarioOutline('eating cucumbers', () => {
-    scenarioOutline('These are passing', () => {
-      scenario('example', () => {
+  describe('eating cucumbers', () => {
+    describe('These are passing', () => {
+      scenario('example #1', () => {
         given('there are 12 cucumbers');
         when('I eat 5 cucumbers');
         then('I should have 7 cucumbers');
       });
       
-      scenario('example', () => {
+      scenario('example #2', () => {
         given('there are 20 cucumbers');
         when('I eat 5 cucumbers');
         then('I should have 15 cucumbers');
       });
     });
     
-    scenarioOutline('These are also passing', () => {
-      scenario('example', () => {
+    describe('These are also passing', () => {
+      scenario('example #1', () => {
         given('there are 22 cucumbers');
         when('I eat 5 cucumbers');
         then('I should have 17 cucumbers');
       });
       
-      scenario('example', () => {
+      scenario('example #2', () => {
         given('there are 10 cucumbers');
         when('I eat 5 cucumbers');
         then('I should have 5 cucumbers');
