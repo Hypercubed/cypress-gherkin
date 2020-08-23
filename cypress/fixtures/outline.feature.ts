@@ -19,13 +19,13 @@ feature('Examples Tables in Gherkin text', () => {
       when('I eat <eat> cucumbers');
       then('I should have <left> cucumbers');
     });
-
+    
     examples('These are passing', [
       ['start', 'eat', 'left'],
       [12, 5, 7],
       [20, 5, 15]
     ]);
-
+    
     examples('These are also passing', [
       ['start', 'eat', 'left'],
       [22, 5, 17],

@@ -1,7 +1,0 @@
-const { transform } = require('../build/main/transform');
-
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', function(data) {
-  process.stdout.write(transform(data));
-});
