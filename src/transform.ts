@@ -144,17 +144,20 @@ const walker = new Walker({
     let type = (step.keyword || 'Given').trim();
     const steps = parent.steps || null;
 
-    imports.add(type.toLowerCase());
+    if (type === '*') type = 'And';
 
     let _type = type;
     let i = index; // find previous step that's not an "and" or "but"
-    while (steps && i > 0 && (_type === 'And' || _type === 'But')) {
+    while (steps && i > 0 && (_type === 'And' || _type === 'But' || _type === '*')) {
       _type = (steps[--i].keyword || 'Given').trim();
     }
     addDefinition(_type, step.text || '');
 
     type = type.toLowerCase();
     imports.add(type);
+    if (type === 'and' || type === 'but') {
+      type = '  ' + type;
+    }
     return `${type}('${step.text}');`;
   },
 });

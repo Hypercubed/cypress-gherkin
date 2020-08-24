@@ -3,6 +3,7 @@ CHANGELOG
 
 ## HEAD (Unreleased)
 * Fix: transform "Example keyword" as `example`
+* Feature: support `*` as a gherkin keyword
 
 ---
 

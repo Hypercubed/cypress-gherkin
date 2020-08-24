@@ -1,4 +1,4 @@
-import { feature, background, given, Given, rule, scenario } from '@hypercubed/cypress-gherkin';
+import { feature, background, Given, given, rule, scenario } from '@hypercubed/cypress-gherkin';
 
 Given('the background', () => {
 

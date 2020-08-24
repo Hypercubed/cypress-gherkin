@@ -1,4 +1,4 @@
-import { feature, scenario, given, Given, and, when, When, then, Then, but } from '@hypercubed/cypress-gherkin';
+import { feature, scenario, Given, given, and, When, when, Then, then, but } from '@hypercubed/cypress-gherkin';
 
 Given('a user visits {string}', (a: string) => {
 
@@ -23,9 +23,9 @@ Then('something else', () => {
 feature('My First Test', () => {
   scenario('Navigates on click', () => {
     given('a user visits "https://example.cypress.io"');
-    and('something');
+      and('something');
     when('they click the link labeled "type"');
     then('the URL should include "/commands/actions"');
-    but('something else');
+      but('something else');
   });
 });

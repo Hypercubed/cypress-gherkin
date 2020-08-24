@@ -1,4 +1,4 @@
-import { feature, rule, example, given, Given, when, When, then, Then, and, but } from '@hypercubed/cypress-gherkin';
+import { feature, rule, example, Given, given, When, when, Then, then, and, but } from '@hypercubed/cypress-gherkin';
 
 Given('there are {int} {float} coins inside', (a: number, b: number) => {
 
