@@ -44,4 +44,28 @@ describe('transforms', () => {
       });
     });
   });
+
+  it('Rules and example', () => {
+    cy.fixture('rules.feature').should(text => {
+      cy.fixture('rules.feature.ts').should(script => {
+        expectEqualByLine(transform(text), script);
+      });
+    });
+  });
+
+  it.skip('Data Tables', () => {
+    cy.fixture('data-tables.feature').should(text => {
+      cy.fixture('data-tables.feature.ts').should(script => {
+        expectEqualByLine(transform(text), script);
+      });
+    });
+  });
+
+  it.skip('Attachments', () => {
+    cy.fixture('attachments.feature').should(text => {
+      cy.fixture('attachments.feature.ts').should(script => {
+        expectEqualByLine(transform(text), script);
+      });
+    });
+  });
 });

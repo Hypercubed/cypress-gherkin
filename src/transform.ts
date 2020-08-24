@@ -101,8 +101,9 @@ const walker = new Walker({
     return printFunction(background.name, 'background', next().join('\n'));
   },
   visitScenario(scenario, _index, _parent, next) {
-    imports.add('scenario');
-    return printFunction(scenario.name, 'scenario', next().join('\n'));
+    const type = (scenario.keyword || 'scenario')?.trim().toLowerCase();
+    imports.add(type);
+    return printFunction(scenario.name, type, next().join('\n'));
   },
   visitRule(rule, _index, _parent, next) {
     imports.add('rule');
