@@ -76,7 +76,7 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
       log.snapshot('before', { at: 0 });
     }
 
-    let value = fn.apply(null, args);
+    let value = fn.apply(this, args);
     value = Cypress.isCy(value) ? value : Promise.resolve(value);
 
     if (log) {

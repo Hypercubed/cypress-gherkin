@@ -4,6 +4,7 @@ CHANGELOG
 ## HEAD (Unreleased)
 * Fix: transform "Example keyword" as `example`
 * Feature: support `*` as a gherkin keyword
+* Feature: support context object sharing via `this` in step definitions
 
 ---
 
