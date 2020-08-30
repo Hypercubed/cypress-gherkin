@@ -1,8 +1,14 @@
 import { Step } from '../../../src/definitions';
 
-Step('*',  /^I visit "([^"]*)?"$/, cy.visit);
+/*
+ * Rules: 
+ * All steps in third-person point of view.
+ * Given/When/Then steps should use present tense
+ */
 
-Step('*', /^I (click|doubleclick) on the element "([^"]*)?"$/, (action: string, selector: string) => {
+Step('*', 'the user visits {string}', cy.visit);
+
+Step('*', /^the user (click|doubleclick)s on the element "([^"]*)?"$/, (action: string, selector: string) => {
   if (action === 'click') {
     cy.get(selector).click();
   } else {
@@ -10,42 +16,41 @@ Step('*', /^I (click|doubleclick) on the element "([^"]*)?"$/, (action: string, 
   }
 });
 
-Step('*', 'I scroll to the {word} of the page', (direction: string) => {
-    let windowObj: Window;
-    cy.window()
-      .then((win) => {
-        windowObj = win;
-        return cy.get('body');
-      })
-      .then((body) => {
-        const { scrollHeight } = body[0];
-        const px = direction === 'top' ? 0 : scrollHeight + 100;
+Step('*', 'the user scrolls to the {word} of the page', (direction: string) => {
+  let windowObj: Window;
+  cy.window()
+    .then((win) => {
+      windowObj = win;
+      return cy.get('body');
+    })
+    .then((body) => {
+      const { scrollHeight } = body[0];
+      const px = direction === 'top' ? 0 : scrollHeight + 100;
 
-        windowObj.scrollTo(0, px);
-      });
-  }
-);
+      windowObj.scrollTo(0, px);
+    });
+});
 
-Step('*', /^I type "([^"]*)?" in the element "([^"]*)?"$/, (value: string, selector: string) => {
+Step('*', 'the user types {string} in the element {string}', (value: string, selector: string) => {
   cy.get(selector).first().type(value);
 });
 
-Step('*', /^I clear the element "([^"]*)?"$/, (selector: string) => {
+Step('*', 'the user clears the element {string}', (selector: string) => {
   cy.get(selector).clear({ force: true });
 });
 
-Step('*', /^I wait for (\d+)ms$/, (ms: number) => {
+Step('*', 'the user waits for {int}ms', (ms: number) => {
   cy.wait(ms);
 });
 
-Step('*', /^I wait for "([^"]*)?"$/, (alias: string) => {
+Step('*', 'the user waits for {string}', (alias: string) => {
   cy.wait(alias);
 });
 
-Step('*', /^I press "([^"]*)?"$/, (key: string) => {
+Step('*', 'the user presses {string}', (key: string) => {
   cy.focused().type(`{${key}}`);
 });
 
-Step('*', /^I scroll to the element "([^"]*)?"$/, (selector: string) => {
+Step('*', 'the user scrolls to the element {string}', (selector: string) => {
   cy.get(selector).scrollIntoView();
 });

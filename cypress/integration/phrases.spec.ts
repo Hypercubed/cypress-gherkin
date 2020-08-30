@@ -16,52 +16,85 @@ function match(text: string, args?: any) {
   }
 }
 
+/*
+ * Rules: Use thrid person ("the user")
+ * Given steps should use past or present-perfect tense
+ * When steps should use present tense
+ * Then steps should use present
+ */
+
 describe('gherkin-steps', () => {
   describe('commmands', () => {
     it('visit', () => {
-      match('I visit "https://example.cypress.io"', ['https://example.cypress.io']);
+      match('the user visits "https://example.cypress.io"', ['https://example.cypress.io']);
     });
   
     it('click', () => {
-      match('I click on the element ".hello"', ['click', '.hello']);
+      match('the user clicks on the element ".hello"', ['click', '.hello']);
     });
 
     it('wait', () => {
-      match('I wait for "@post"', ['@post']);
-      match('I wait for 100ms', [100]);
+      match('the user waits for "@post"', ['@post']);
+      match('the user waits for 100ms', [100]);
     });
 
     it(' type', () => {
-      match('I type "fake@email.com" in the element ".action-email"', ['fake@email.com', '.action-email']);
+      match('the user types "fake@email.com" in the element ".action-email"', ['fake@email.com', '.action-email']);
     });
 
     it('scroll', () => {
-      match(`I scroll to the bottom of the page`, ['bottom']);
-      match(`I scroll to the top of the page`, ['top']);
+      match(`the user scrolls to the bottom of the page`, ['bottom']);
+      match(`the user scrolls to the top of the page`, ['top']);
     });
   });
 
   describe('bbd assertions', () => {
-    it('url', () => {
-      match('the url should be "actions"', [null, 'actions']);
-      match('the url should not be "actions"', [' not', 'actions']);
+    it('is', () => {
+      match('the url is "actions"', ['url', null, 'actions']);
+      match('the title is not "actions"', ['title', ' not', 'actions']);
+      match('the hash is "actions"', ['hash', null, 'actions']);
     });
 
-    it('title', () => {
-      match('the title should be "Cypress"', [null, 'Cypress']);
-      match('the title should not be "Cypress"', [' not', 'Cypress']);
+    it('contain', () => {
+      match('the url contains "actions"', ['url', null, 'actions']);
+      match('the title does not contain "actions"', ['title', ' does not', 'actions']);
+      match('the hash contains "actions"', ['hash', null, 'actions']);
     });
   });
 
   describe('chai-jquery', () => {
-    it('exists', () => {
-      match(`the element "hello" exists`, ['hello']);
-      match(`the element "hello" does exist`, ['hello', null]);
-      match(`the element "hello" does not exist`, ['hello', ' not']);
+    it('value', () => {
+      match(`the element "#username" has attr "hello" with value "world"`, ['#username', null, 'attr', 'hello', 'world']);
+      match(`the element "#username" does not have css "hello" with value "world"`, ['#username', ' does not', 'css', 'hello', 'world']);
+      match(`the element "#username" has prop "hello" with value "world"`, ['#username', null, 'prop', 'hello', 'world']);
+      match(`the element "#username" does not have data "hello" with value "world"`, ['#username', ' does not', 'data', 'hello', 'world']);
     });
 
-    it('value', () => {
-      match(`the element "#username" has value "hello"`, ['#username', 'value', 'hello']);
+    it('has', () => {
+      match(`the element "#username" has class "hello"`, ['#username', null, 'class', 'hello']);
+      match(`the element "#username" does not have id "hello"`, ['#username', ' does not', 'id', 'hello']);
+      match(`the element "#username" has html "hello"`, ['#username', null, 'html', 'hello']);
+      match(`the element "#username" does not have text "hello"`, ['#username', ' does not', 'text', 'hello']);
+    });
+
+    it('is', () => {
+      match(`the element "#username" is visible`, ['#username', null, 'visible']);
+      match(`the element "#username" is not enabled`, ['#username', ' not', 'enabled']);
+    });
+
+    it('exists', () => {
+      match(`the element "hello" exists`, ['hello', null]);
+      match(`the element "hello" does not exist`, ['hello', ' does not']);
+    });
+
+    it('match', () => {
+      match(`the element "hello" matches "world"`, ['hello', null, 'world']);
+      match(`the element "hello" does not match "world"`, ['hello', ' does not', 'world']);
+    });
+
+    it('contain', () => {
+      match(`the element "hello" contains "world"`, ['hello', null, 'world']);
+      match(`the element "hello" does not contain "world"`, ['hello', ' does not', 'world']);
     });
   });
 });

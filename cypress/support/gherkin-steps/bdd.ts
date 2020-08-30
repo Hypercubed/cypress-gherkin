@@ -1,25 +1,20 @@
-import { Step } from '../../../src/definitions';
+import { Then } from '../../../src/index';
 
-Step('*', /^the title should( not)* contain "([^"]*)?"$/, (not: boolean, title: string) => {
-  cy.title().should(not ? 'not.contain' : 'contain', title);
+/*
+ * Rules: 
+ * All steps in third-person point of view.
+ * Given/When/Then steps should use present tense
+ * Don't include should
+ */
+
+Then(/^the (title|url|hash) is( not)* "([^"]*)?"$/, (subject: string, not: boolean, title: string) => {
+  // @ts-ignore
+  const s = cy[subject]();
+  s.should(not ? 'not.equal' : 'equal', title);
 });
 
-Step('*', /^the title should( not)* be "([^"]*)?"$/, (not: boolean, title: string) => {
-  cy.title().should(not ? 'not.equal' : 'equal', title);
-});
-
-Step('*', /^the title is( not)* "([^"]*)?"$/, (not: boolean, title: string) => {
-  cy.title().should(not ? 'not.equal' : 'equal', title);
-});
-
-Step('*', /^the url should( not)* be "([^"]*)?"$/, (not: boolean, url: string) => {
-  cy.url().should(not ? 'not.equal' : 'equal', url);
-});
-
-Step('*', /^the url should( not)* contain "([^"]*)?"$/, (not: boolean, url: string) => {
-  cy.url().should(not ? 'not.contain' : 'contain', url);
-});
-
-Step('*', /^the url contains "([^"]*)?"$/, (url: string) => {
-  cy.url().should('contain', url);
+Then(/^the (title|url|hash)( does not)* contain(?:s)* "([^"]*)?"$/, (subject: string, not: boolean, title: string) => {
+  // @ts-ignore
+  const s = cy[subject]();
+  s.should(not ? 'not.contain' : 'contain', title);
 });
