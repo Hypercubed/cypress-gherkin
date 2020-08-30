@@ -2,9 +2,13 @@ CHANGELOG
 =========
 
 ## HEAD (Unreleased)
-* Fix: transform "Example keyword" as `example`
+* Feature: transform "Example keyword" as `example`
 * Feature: support `*` as a gherkin keyword
 * Feature: support context object sharing via `this` in step definitions
+* Feature: transform supports tags and descriptions
+* Feature: transform supports `@focus` (`@only`) and `@pending` (`@skip`)
+* Feature: Gherkin-text runner supports `@focus` (`@only`) and `@pending` (`@skip`)
+* Feature: throw error on multiple step definitions match
 
 ---
 

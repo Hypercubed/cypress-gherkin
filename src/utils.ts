@@ -19,3 +19,7 @@ export const getElements = ($el: any) => {
     return $el;
   }
 };
+
+export const includesSome = (a: string[], b: string[]) => {
+  return a.some((_) => b.includes(_));
+};

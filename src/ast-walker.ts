@@ -29,49 +29,27 @@ interface Visitors {
 }
 
 const DEFAULT_VISITORS: Visitors = {
-  visitFeature: () => null,
-  visitStep: () => null,
-  visitBackground: () => null,
-  visitExample: () => null,
-  visitExamples: () => null,
-  visitScenarioOutline: () => null,
-  visitScenario: () => null,
-  visitRule: () => null,
-};
-
-const DEFAULT_OPTIONS = {
-  skip: false,
-  only: false,
+  visitFeature: (_n, _i, _p, next) => next(),
+  visitStep: (_n, _i, _p, next) => next(),
+  visitBackground: (_n, _i, _p, next) => next(),
+  visitExample: (_n, _i, _p, next) => next(),
+  visitExamples: (_n, _i, _p, next) => next(),
+  visitScenarioOutline: (_n, _i, _p, next) => next(),
+  visitScenario: (_n, _i, _p, next) => next(),
+  visitRule: (_n, _i, _p, next) => next(),
 };
 
 export class Walker {
-  public options = DEFAULT_OPTIONS;
-
-  protected readonly baseOptions = DEFAULT_OPTIONS;
   protected readonly visitors: Visitors;
 
-  constructor(
-    visitors: Partial<Visitors>,
-    options?: Partial<typeof DEFAULT_OPTIONS>
-  ) {
+  constructor(visitors: Partial<Visitors>) {
     this.visitors = {
       ...DEFAULT_VISITORS,
       ...visitors,
     };
-
-    this.baseOptions = {
-      ...DEFAULT_OPTIONS,
-      ...options,
-    };
   }
 
-  walk(ast: GherkinDocument, options?: Partial<typeof DEFAULT_OPTIONS>) {
-    this.options = {
-      ...DEFAULT_OPTIONS,
-      ...this.baseOptions,
-      ...options,
-    };
-
+  walk(ast: GherkinDocument) {
     return this.walkFeature(ast.feature as Feature, 0, ast);
   }
 

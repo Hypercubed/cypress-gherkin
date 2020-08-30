@@ -68,4 +68,12 @@ describe('transforms', () => {
       });
     });
   });
+
+  it('Tags and comments', () => {
+    cy.fixture('tags_comments.feature').should(text => {
+      cy.fixture('tags_comments.feature.ts').should(script => {
+        expectEqualByLine(transform(text), script);
+      });
+    });
+  });
 });

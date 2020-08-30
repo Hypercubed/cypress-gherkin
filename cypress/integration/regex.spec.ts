@@ -12,16 +12,26 @@ const steps = {
   },
   word(_: unknown) {
     expect(_).to.be.a('string')
+  },
+  boolean(_: unknown) {
+    expect(_).to.be.a('boolean');
+  },
+  option(_: unknown) {
+    expect(_).to.be.a('string');
   }
 }
 
-Given('I have the string {string}', (_) => steps.string(_));
+Given(/^I have the string "([^"]*)?"$/, (_) => steps.string(_));
 
-Given('I have the int {int}', (_) => steps.int(_));
+Given(/^I have the int (\-?[\d]+)$/, (_) => steps.int(Number(_)));
 
-Given('I have the float {float}', (_) => steps.float(_));
+Given(/^I have the float (\-?[\d\.]+)$/, (_) => steps.float(Number(_)));
 
-Given('I have the word {word}', (_) => steps.word(_));
+Given(/^I have the word ([^\s]+)$/, (_) => steps.word(_));
+
+Given(/^I do( not)* have X/, (_) => steps.boolean(Boolean(_)));
+
+Given(/^I (accept|cancel|close)/, (_) => steps.option(_));
 
 feature('Parameters', () => {
   beforeEach(() => {
@@ -29,6 +39,8 @@ feature('Parameters', () => {
     cy.spy(steps, 'int').as('int');
     cy.spy(steps, 'float').as('float');
     cy.spy(steps, 'word').as('word');
+    cy.spy(steps, 'boolean').as('boolean');
+    cy.spy(steps, 'option').as('option');
   });
 
   describe('gherkin syntax', () => {
@@ -37,11 +49,15 @@ feature('Parameters', () => {
       given('I have the int 3');
       given('I have the float -3.14159');
       given('I have the word hello');
+      given('I do have X');
+      given('I cancel');
 
       cy.get('@string').should('calledWith', 'hello world');
       cy.get('@int').should('calledWith', 3);
       cy.get('@float').should('calledWith', -3.14159);
       cy.get('@word').should('calledWith', 'hello');
+      cy.get('@boolean').should('calledWith', false);
+      cy.get('@option').should('calledWith', 'cancel');
     });
   });
 
@@ -60,6 +76,8 @@ feature('Parameters', () => {
               Given I have the int -2
               Given I have the float 2.71828
               Given I have the word Goodbye
+              Given I do not have X
+              Given I close
         `
       );
 
@@ -67,6 +85,8 @@ feature('Parameters', () => {
       cy.get('@int').should('calledWith', -2);
       cy.get('@float').should('calledWith', 2.71828);
       cy.get('@word').should('calledWith', 'Goodbye');
+      cy.get('@boolean').should('calledWith', true);
+      cy.get('@option').should('calledWith', 'close');
     });
   });
 });

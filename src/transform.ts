@@ -1,4 +1,5 @@
 import { Parser, AstBuilder } from '@cucumber/gherkin';
+import { messages } from '@cucumber/messages';
 
 import {
   ParameterTypeRegistry,
@@ -6,8 +7,9 @@ import {
   ParameterType,
 } from '@cucumber/cucumber-expressions';
 
-import { Incrementing } from './utils';
+import { Incrementing, includesSome } from './utils';
 import { Walker } from './ast-walker';
+import { ONLY, SKIP, TAGS } from './constants';
 
 const parameterTypeRegistry = new ParameterTypeRegistry();
 const cucumberExpressionGenerator = new CucumberExpressionGenerator(
@@ -24,6 +26,8 @@ interface Definition {
   parameterNames: readonly string[];
   parameterTypes: readonly ParameterType<any>[];
 }
+
+type ITag = messages.GherkinDocument.Feature.ITag;
 
 const definitions = new Set();
 const imports = new Set();
@@ -69,11 +73,44 @@ function indent(s: string) {
   return '  ' + s.trim().split('\n').join('\n  ') + '\n';
 }
 
+const printComment = (text: string) => {
+  if (!text) {
+    return '';
+  }
+  return (
+    '// ' +
+    text
+      .trim()
+      .split('\n')
+      .map((s) => s.trim())
+      .join('\n// ') +
+    '\n'
+  );
+};
+
+const printFunctionName = (type: string, tags: string[]) => {
+  if (includesSome(tags, ONLY)) {
+    type += '.only';
+  } else if (includesSome(tags, SKIP)) {
+    type += '.skip';
+  }
+  return type;
+};
+
+const printName = (name: string, tags: string[]) => {
+  tags = (tags || []).filter((t) => !TAGS.includes(t || ''));
+  return [name || '', ...tags].join(' ');
+};
+
 const printFunction = (
   name: string | null | undefined,
   type: string,
-  body: string
+  body: string,
+  itags: ITag[] = []
 ) => {
+  const tags = (itags || []).map((t) => t.name).filter(Boolean) as string[];
+  name = printName(name || '', tags);
+  type = printFunctionName(type, tags);
   let s = name ? `${type}('${name}', () => {\n` : `${type}(() => {\n`;
   s += indent(body);
   s += `});\n`;
@@ -83,8 +120,11 @@ const printFunction = (
 const printExample = (
   name: string | null | undefined,
   type: string,
-  body: string
+  body: string,
+  itags: ITag[] = []
 ) => {
+  const tags = (itags || []).map((t) => t.name).filter(Boolean) as string[];
+  type = printFunctionName(type, tags);
   let s = name ? `${type}('${name}', [\n` : `${type}([\n`;
   s += indent(body);
   s += `]);\n`;
@@ -94,20 +134,32 @@ const printExample = (
 const walker = new Walker({
   visitFeature(feature, _index, _parent, next) {
     imports.add('feature');
-    return printFunction(feature.name, 'feature', next().join('\n'));
+
+    const content = [printComment(feature.description), ...next()].join('\n');
+    return printFunction(feature.name, 'feature', content, feature.tags || []);
   },
   visitBackground(background, _index, _parent, next) {
     imports.add('background');
-    return printFunction(background.name, 'background', next().join('\n'));
+    const content = [
+      printComment(background.description || ''),
+      ...next(),
+    ].join('\n');
+    return printFunction(background.name, 'background', content);
   },
   visitScenario(scenario, _index, _parent, next) {
     const type = (scenario.keyword || 'scenario')?.trim().toLowerCase();
     imports.add(type);
-    return printFunction(scenario.name, type, next().join('\n'));
+    const content = [printComment(scenario.description || ''), ...next()].join(
+      '\n'
+    );
+    return printFunction(scenario.name, type, content, scenario.tags || []);
   },
   visitRule(rule, _index, _parent, next) {
     imports.add('rule');
-    return printFunction(rule.name, 'rule', next().join('\n'));
+    const content = [printComment(rule.description || ''), ...next()].join(
+      '\n'
+    );
+    return printFunction(rule.name, 'rule', content);
   },
   visitScenarioOutline(scenario, _index, _parent, next) {
     imports.add('scenarioOutline');
@@ -118,10 +170,16 @@ const walker = new Walker({
       return `${type}('${step.text}');`;
     });
     const outline = printFunction(null, 'outline', steps.join('\n'));
+    const content = [
+      printComment(scenario.description || ''),
+      outline,
+      ...next(),
+    ].join('\n');
     return printFunction(
       scenario.name,
       'scenarioOutline',
-      [outline, ...next()].join('\n')
+      content,
+      scenario.tags || []
     );
   },
   visitExamples(examples, _index, _parent, next) {
@@ -129,10 +187,12 @@ const walker = new Walker({
     const header = examples.tableHeader?.cells?.map(
       (cell: any) => `'${cell.value}'`
     );
+    const content = `[${header?.join(', ')}],\n` + next().join(',\n');
     return printExample(
       examples.name,
       'examples',
-      `[${header?.join(', ')}],\n` + next().join(',\n')
+      content,
+      examples.tags || []
     );
   },
   visitExample(tableRow, _index, _parent, next) {
@@ -148,7 +208,11 @@ const walker = new Walker({
 
     let _type = type;
     let i = index; // find previous step that's not an "and" or "but"
-    while (steps && i > 0 && (_type === 'And' || _type === 'But' || _type === '*')) {
+    while (
+      steps &&
+      i > 0 &&
+      (_type === 'And' || _type === 'But' || _type === '*')
+    ) {
       _type = (steps[--i].keyword || 'Given').trim();
     }
     addDefinition(_type, step.text || '');

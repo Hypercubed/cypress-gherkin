@@ -3,34 +3,31 @@ import { Given, When, Then, feature, gherkin, scenario, scenarioOutline, given, 
 let count: number;
 
 const steps = {
-  start: (initialCount: number) => {
+  start(initialCount: number) {
     count = initialCount
   },
-  eat: (eatCount: number) => {
+  eat(eatCount: number) {
     count -= eatCount
   },
-  left: (expectedCount: number) => {
+  left(expectedCount: number) {
     assert.strictEqual(count, expectedCount)
   }
 };
 
-// @ts-ignore
-Given('there are {int} cucumbers', (...args) => steps.start(...args));
+Given('there are {int} cucumbers', (int) => steps.start(int));
 
-// @ts-ignore
-When('I eat {int} cucumbers', (...args) => steps.eat(...args));
+When('I eat {int} cucumbers', (int) => steps.eat(int));
 
-// @ts-ignore
-Then('I should have {int} cucumbers', (...args) => steps.left(...args));
+Then('I should have {int} cucumbers', (int) => steps.left(int));
 
-feature('Calls steps', () => {
+feature('Examples', () => {
   beforeEach(() => {
     cy.spy(steps, 'start').as('start');
     cy.spy(steps, 'eat').as('eat');
     cy.spy(steps, 'left').as('left');
   });
 
-  describe.skip('Examples Tables in Gherkin text', () => {
+  describe('Examples Tables in Gherkin text', () => {
     beforeEach(() => {
       cy.stub(window, 'describe', (_name, fn) => fn()).as('describe');
       cy.stub(window, 'it', (_name, fn) => fn()).as('it');

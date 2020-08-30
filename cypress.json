@@ -1,3 +1,4 @@
 {
-  "testFiles": "**/*.{test,spec}.{ts,js}"
+  "testFiles": "**/*.{test,spec}.{ts,js}",
+  "retries": 0
 }

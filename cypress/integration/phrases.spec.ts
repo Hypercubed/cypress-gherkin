@@ -1,8 +1,8 @@
-import { resolve } from '../../src/definitions';
+import { resolveFirst } from '../../src/definitions';
 import '../support/gherkin-steps/common';
 
 function match(text: string, args?: any) {
-  const resolved = resolve('*', text);
+  const resolved = resolveFirst('*', text);
   assert.isOk(resolved, text);
   if (resolved && args) {
     const _args = resolved.expression

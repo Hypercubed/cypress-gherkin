@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, given, when, then, gherkin } from '../../src/index';
+import { When, Then, feature, scenario, when, then, gherkin } from '../../src/index';
 import { messages } from '@cucumber/messages';
 
 type DataTable = messages.GherkinDocument.Feature.Step.DataTable;
@@ -17,23 +17,23 @@ function rawTable(dataTable: DataTable) {
 }
 
 function transpose(table: any): DataTable {
-  return table[0].map((x, i) => table.map((y) => y[i]))
+  return table[0].map((_: any, i: number) => table.map((y: any) => y[i]))
 }
 
 const steps = {
-  when: (arg: DataTable) => {
-    result = transpose(rawTable(arg));
+  when(table: DataTable) {
+    result = transpose(rawTable(table));
   },
-  then: (arg: DataTable) => {
-    expect(rawTable(arg)).to.deep.equal(result);
+  then(table: DataTable) {
+    expect(rawTable(table)).to.deep.equal(result);
   }
 }
 
 let result: any = null;
 
-When('the following table is transposed:', (arg) => steps.when(arg));
+When('the following table is transposed:', (table) => steps.when(table));
 
-Then('it should be:', (arg) => steps.then(arg));
+Then('it should be:', (table) => steps.then(table));
 
 describe('Data Tables', () => {
   beforeEach(() => {
@@ -84,6 +84,43 @@ describe('Data Tables', () => {
         const arg = _.firstCall.args[0];
         expect(arg).to.be.instanceOf(DataTable);
         expect(rawTable(arg)).to.deep.eq([ [ 'a', '1' ], [ 'b', '2' ] ]);
+      });
+    });
+
+    it('handles escaped chars', () => {
+      gherkin(`
+        
+      Feature: Data Tables
+        Data Tables can be places underneath a step and will be passed as the last
+        argument to the step definition. They can be used to represent richer data
+        structures, and can also be transformed to other types.
+
+        Scenario: transposed table
+          When the following table is transposed:
+            | a\\n1 | b\\n2 |
+            | 1 | 2 |
+          Then it should be:
+            | a\\n1 | 1 |
+            | b\\n2 | 2 |
+
+      `);
+
+      cy.get('@describe').should('callCount', 1);
+      cy.get('@beforeEach').should('callCount', 0);
+      cy.get('@it').should('callCount', 1);
+
+      cy.get('@When').should('callCount', 1);
+      cy.get('@Then').should('callCount', 1);
+
+      cy.get('@When').should((_: any) => {
+        const arg = _.firstCall.args[0];
+        expect(arg).to.be.instanceOf(DataTable);
+        expect(rawTable(arg)).to.deep.eq([ [ 'a\n1', 'b\n2' ], [ '1', '2' ] ]);
+      });
+      cy.get('@Then').should((_: any) => {
+        const arg = _.firstCall.args[0];
+        expect(arg).to.be.instanceOf(DataTable);
+        expect(rawTable(arg)).to.deep.eq([ [ 'a\n1', '1' ], [ 'b\n2', '2' ] ]);
       });
     });
   });

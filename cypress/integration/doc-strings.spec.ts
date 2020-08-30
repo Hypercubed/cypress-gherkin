@@ -11,15 +11,15 @@ function content(docString: any): string {
 let snippet: string | null;
 
 const steps = {
-  when: (dataString: any) => {
+  when(dataString: any) {
     snippet = content(dataString);
   },
-  then: () => {
+  then() {
     expect(snippet).to.be.a('string');
   }
 }
 
-When('I use DocString like this', (arg) => steps.when(arg));
+When('I use DocString like this', (dataString) => steps.when(dataString));
 
 Then('I can interpret it as a string', () => steps.then());
 

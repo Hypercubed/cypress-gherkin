@@ -49,7 +49,13 @@ export const Step = (
   });
 };
 
-export const resolve = (_type: string, text: string) => {
+export const resolveAll = (_type: string, text: string) => {
+  return definitions.filter(({ expression }) => {
+    return expression.match(text);
+  });
+};
+
+export const resolveFirst = (_type: string, text: string) => {
   return definitions.find(({ expression }) => {
     return expression.match(text);
   });

@@ -1,13 +1,16 @@
 import Parser from '@cucumber/gherkin/dist/src/Parser';
 import AstBuilder from '@cucumber/gherkin/dist/src/AstBuilder';
+import { messages } from '@cucumber/messages';
 
-import { Incrementing, isJquery, getElements } from './utils';
-import { resolve, getSuggestions } from './definitions';
+import { Incrementing, isJquery, getElements, includesSome } from './utils';
+import { resolveAll, getSuggestions } from './definitions';
 import { Walker } from './ast-walker';
+import { ONLY, SKIP, TAGS } from './constants';
 
-const nextId = Incrementing();
+const Tag = messages.GherkinDocument.Feature.Tag;
+type ITag = messages.GherkinDocument.Feature.ITag;
 
-const parser = new Parser(new AstBuilder(nextId));
+const parser = new Parser(new AstBuilder(Incrementing()));
 
 export const execute = (_type: string, text: string, ..._args: any[]) => {
   return cy.then(function () {
@@ -24,9 +27,9 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
       });
     }
 
-    const resolved = resolve(_type, text);
+    const resolved = resolveAll(_type, text);
 
-    if (!resolved) {
+    if (resolved.length === 0) {
       Cypress.log({
         name: _type,
         message: `${_type}, ${text}`,
@@ -44,29 +47,44 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
       });
 
       throw new Error('Missing Gherkin statement');
+    } else if (resolved.length > 1) {
+      Cypress.log({
+        name: _type,
+        message: `${_type}, ${text}`,
+        // @ts-ignore
+        state: 'failed',
+        ended: true,
+        consoleProps: () => {
+          return {
+            Text: text,
+            Matches: resolved,
+            Test: this.test.clone(),
+            Spec: Cypress.spec,
+          };
+        },
+      });
+
+      throw new Error('Multiple step definitions match');
     }
 
-    let args = resolved.expression
-      .match(text)
-      .map((match) => match.getValue(null));
+    const { expression, implementation, options } = resolved[0];
 
-    if (_args && _args.length) {
-      args = args.concat(_args);
-    }
-
-    const fn = resolved.implementation;
+    const args = [
+      ...expression.match(text).map((match) => match.getValue(null)),
+      ..._args,
+    ];
 
     const consoleProps = (val: any) => () => {
       return {
         Text: text,
-        Function: fn.name || undefined,
+        Function: implementation.name || undefined,
         Args: args || [],
-        Contents: fn.toString(),
+        Contents: implementation.toString(),
         Yielded: isJquery(val) ? getElements(val) : val,
       };
     };
 
-    let log = resolved.options.log;
+    let log = options.log;
 
     if (log) {
       log = Cypress.log({
@@ -76,7 +94,7 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
       log.snapshot('before', { at: 0 });
     }
 
-    let value = fn.apply(this, args);
+    let value = implementation.apply(this, args);
     value = Cypress.isCy(value) ? value : Promise.resolve(value);
 
     if (log) {
@@ -95,17 +113,54 @@ export const execute = (_type: string, text: string, ..._args: any[]) => {
   });
 };
 
+const getName = (name: string | undefined | null, tags: any[]) => {
+  tags = (tags || []).filter((t) => !TAGS.includes(t || ''));
+  return [name || '', ...tags].join(' ');
+};
+
+const invokeIt = (
+  name: string | null | undefined,
+  _tags: ITag[] | null | undefined,
+  next: any
+) => {
+  const tags = (_tags || []).map((t) => t.name).filter(Boolean) as string[];
+
+  // tslint:disable-next-line: ban-types
+  let fn: Function = it;
+  if (includesSome(tags, ONLY)) {
+    fn = it.only;
+  } else if (includesSome(tags, SKIP)) {
+    fn = it.skip;
+  }
+
+  // Note: must no return anything
+  // see https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-invoked-one-or-more-cy-commands-but-returned-a-different-value
+  fn(getName(name, tags), () => {
+    next();
+  });
+};
+
+const invokeDescribe = (
+  name: string | null | undefined,
+  _tags: ITag[] | null | undefined,
+  next: any
+) => {
+  const tags = (_tags || []).map((t) => t.name).filter(Boolean) as string[];
+
+  // tslint:disable-next-line: ban-types
+  let fn: Function = describe;
+  if (includesSome(tags, ONLY)) {
+    fn = describe.only;
+  } else if (includesSome(tags, SKIP)) {
+    fn = describe.skip;
+  }
+
+  fn(getName(name, tags), next);
+};
+
 const walker = new Walker({
   visitFeature(feature, _index, _parent, next) {
-    if (walker.options.only) {
-      describe.only(feature.name || '', next);
-      return;
-    }
-    if (walker.options.skip) {
-      describe.skip(feature.name || '', next);
-      return;
-    }
-    describe(feature.name || '', next);
+    invokeDescribe(feature.name, feature.tags, next);
   },
   visitStep(step, _index, _parent) {
     const args = [step.dataTable, step.docString].filter((e) => e);
@@ -113,28 +168,23 @@ const walker = new Walker({
   },
   visitBackground(background, _index, _parent, next) {
     beforeEach(background.name || '', () => {
-      if (!walker.options.skip) next();
+      next();
     });
   },
   visitExample(_row, _index, _parent, next) {
     next();
   },
   visitExamples(examples, _index, _parent, next) {
-    it(examples.name || '', () => {
-      if (!walker.options.skip) next();
-    });
+    invokeIt(examples.name, examples.tags, next);
   },
   visitScenarioOutline(scenario, _index, _parent, next) {
-    describe(scenario.name || '', next);
+    invokeDescribe(scenario.name, scenario.tags, next);
   },
   visitScenario(scenario, _index, _parent, next) {
-    // Note: must no return anything (see https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-invoked-one-or-more-cy-commands-but-returned-a-different-value)
-    it(scenario.name || '', () => {
-      if (!walker.options.skip) next();
-    });
+    invokeIt(scenario.name, scenario.tags, next);
   },
   visitRule(rule, _index, _parent, next) {
-    describe(rule.name || '', next);
+    invokeDescribe(rule.name, null, next);
   },
 });
 
@@ -145,10 +195,22 @@ export const gherkin = (text: string) => {
 
 gherkin.skip = (text: string) => {
   const ast = parser.parse(text);
-  walker.walk(ast, { skip: true });
+
+  if (ast.feature) {
+    ast.feature.tags = ast.feature.tags || [];
+    ast.feature.tags.push(new Tag({ name: '@skip' }));
+  }
+
+  walker.walk(ast);
 };
 
 gherkin.only = (text: string) => {
   const ast = parser.parse(text);
-  walker.walk(ast, { only: true });
+
+  if (ast.feature) {
+    ast.feature.tags = ast.feature.tags || [];
+    ast.feature.tags.push(new Tag({ name: '@only' }));
+  }
+
+  walker.walk(ast);
 };

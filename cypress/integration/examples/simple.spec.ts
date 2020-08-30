@@ -22,6 +22,7 @@ Then('the {string} input has {string} as its value', (e: string, s: string) => {
 
 gherkin(
   `
+    @hello
     Feature: My First Test (Gherkin text)
       Scenario: Navigates on click
         Given a user visits "https://example.cypress.io"
