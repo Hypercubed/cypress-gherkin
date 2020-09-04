@@ -1,39 +1,39 @@
 import { feature, scenario, given, when, then, and, gherkin } from '../../src/index';
 
-import '../support/gherkin-steps/bdd';
-import '../support/gherkin-steps/chai-jquery';
-import '../support/gherkin-steps/cy-commands';
+import '../support/gherkin-steps';
 
 feature('Using common phrase', () => {
   scenario('Gherkin Syntax', () => {
     given('the user visits "https://example.cypress.io"');
-      and('the title is "Cypress.io: Kitchen Sink"');
-      and('the title is not "Cypress.io: Kitchen Sinks"');
+      and('the title should be "Cypress.io: Kitchen Sink"');
+      and('the title should not be "Cypress.io: Kitchen Sinks"');
+      and('alias the element containing "type" as "link"');
     when('the user scrolls to the bottom of the page');
-      and('the user scrolls to the top of the page');
-      // and(`I click on the link "a[href='/commands/actions']:first-child"`);
-      cy.get('a').contains('type').click();
-      and('the user types "fake@email.com" in the element ".action-email"');
-    then('the url is "https://example.cypress.io/commands/actions"');
-      and('the element ".action-email" has value "fake@email.com"');
+      and('scrolls to the top of the page');
+      and(`clicks on the element "@link"`);
+      and('types "fake@email.com" in the element ".action-email"');
+    then('the url should be "https://example.cypress.io/commands/actions"');
+      and('the element ".action-email" should have value "fake@email.com"');
+      and('".action-email" should not have value "fake@gmail.com"');
   });
 
   gherkin(`
   Feature: Gherkin Text
     Scenario: Search
       Given the user visits "http://google.com"
-        And the title is "Google"
+        And the title should equal "Google"
       When the user types "Cypress" in the element "[name=\'q\']"
-        And the user presses "Enter"
-      Then the title is "Cypress - Google Search"
-        And the url contains "q=Cypress"
+        And presses enter
+      Then the title should equal "Cypress - Google Search"
+        And the url should contain "q=Cypress"
   
     Scenario: Footer
       Given the user visits "http://www.google.com/search?q=Cypres"
-        And the user scrolls to the element "#fbar"
-      Then the element "#fbar" is visible
-        And the element "#fbar" exists
-        And the element "#fbar" contains "Learn more"
+        And scrolls to the element "#fbar"
+      Then alias the element "#footcnt .fbar" as "fbar"
+        And "@fbar" should be visible
+        And "@fbar" should exist
+        And "@fbar" should contain "Learn more"
   `);
 });
 

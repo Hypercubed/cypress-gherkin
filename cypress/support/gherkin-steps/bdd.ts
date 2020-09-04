@@ -1,20 +1,33 @@
 import { Then } from '../../../src/index';
+import './properties';
 
 /*
  * Rules: 
  * All steps in third-person point of view.
  * Given/When/Then steps should use present tense
- * Don't include should
+ * use should/should not
  */
 
-Then(/^the (title|url|hash) is( not)* "([^"]*)?"$/, (subject: string, not: boolean, title: string) => {
+Then('the {_subject_} {should} be/equal {string}', (subject: string, should: boolean, title: string) => {
   // @ts-ignore
   const s = cy[subject]();
-  s.should(not ? 'not.equal' : 'equal', title);
+  s.should(should ? 'equal' : 'not.equal', title);
 });
 
-Then(/^the (title|url|hash)( does not)* contain(?:s)* "([^"]*)?"$/, (subject: string, not: boolean, title: string) => {
+Then('the {_subject_} {should} contain {string}', (subject: string, should: boolean, title: string) => {
   // @ts-ignore
   const s = cy[subject]();
-  s.should(not ? 'not.contain' : 'contain', title);
+  s.should(should ? 'contain' : 'not.contain', title);
+});
+
+Then('execute the task {word}', (event:  string) => {
+  cy.task(event);
+});
+
+Then('execute the command {string}', (command:  string) => {
+  cy.task(command);
+});
+
+Then('capture the current screenshot', () => {
+  cy.screenshot();
 });
