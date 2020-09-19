@@ -2,7 +2,7 @@
   "extends": ["tslint:latest", "tslint-config-prettier"],
   "rules": {
     "interface-name": [true, "never-prefix"],
-    "no-implicit-dependencies": [true, "dev"],
+    "no-implicit-dependencies": [true, "dev", "@hypercubed/cypress-gherkin"],
     "no-var-keyword": true,
     "no-submodule-imports": false
   }

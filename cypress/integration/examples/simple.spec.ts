@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, given, when, then, gherkin } from '../../../src/index';
+import { Given, When, Then, feature, scenario, given, when, then, gherkin } from '@hypercubed/cypress-gherkin';
 
 Given('a user visits {string}', (s: string) => {
   return cy.visit(s);

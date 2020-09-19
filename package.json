@@ -15,7 +15,7 @@
     "test": "run-s build test:*",
     "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:unit": "cypress run",
-    "watch": "cypress open",
+    "open": "cypress open",
     "clean": "trash build test",
     "version": "chg release -y && git add -A CHANGELOG.md",
     "np": "np"
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "chg": "^0.4.0",
-    "cypress": "^5.0.0",
+    "cypress": "^5.2.0",
     "long": "^4.0.0",
     "np": "^6.4.0",
     "npm-run-all": "^4.1.5",
@@ -41,7 +41,7 @@
     "trash-cli": "^3.1.0",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.3"
   },
   "repository": {
     "type": "git",

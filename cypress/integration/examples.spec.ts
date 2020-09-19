@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, gherkin, scenario, scenarioOutline, given, when, then, outline, examples } from '../../src/index';
+import { Given, When, Then, feature, gherkin, scenario, scenarioOutline, given, when, then, outline, examples } from '@hypercubed/cypress-gherkin';
 
 let count: number;
 

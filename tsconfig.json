@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "target": "es2017",
     "outDir": "build/main",
     "rootDir": "src",
@@ -30,7 +31,11 @@
 
     "lib": ["dom", "es2017"],
     "types": ["cypress", "long"],
-    "typeRoots": ["node_modules/@types", "src/types"]
+    "typeRoots": ["node_modules/@types", "src/types"],
+    "paths": {
+      "@hypercubed/cypress-gherkin": ["index.ts"],
+      "@hypercubed/cypress-gherkin/*": ["*"],
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules/**", "cypress/fixtures/**"],

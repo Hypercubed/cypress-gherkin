@@ -1,4 +1,4 @@
-import { Given, Then, feature, scenario, given, then, gherkin } from '../../../src/index';
+import { Given, Then, feature, scenario, given, then, gherkin } from '@hypercubed/cypress-gherkin';
 
 const url = 'https://google.com'
 Given('I open Google page', () => {

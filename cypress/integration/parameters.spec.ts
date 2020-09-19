@@ -1,4 +1,4 @@
-import { Given, feature, scenario, given, gherkin } from "../../src";
+import { Given, feature, scenario, given, gherkin } from '@hypercubed/cypress-gherkin';
 
 const steps = {
   string(_: unknown) {

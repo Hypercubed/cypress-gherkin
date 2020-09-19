@@ -1,4 +1,4 @@
-import { When, Then, feature, scenario, when, then, gherkin } from '../../../src/index';
+import { When, Then, feature, scenario, when, then, gherkin } from '@hypercubed/cypress-gherkin';
 
 function content(docString: any) {
   return docString.content || docString;

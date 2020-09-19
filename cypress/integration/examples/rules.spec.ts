@@ -1,4 +1,4 @@
-import { Given, When, Then, gherkin, feature, given, when, then, but, and, rule, example } from '../../../src/index';
+import { Given, When, Then, gherkin, feature, given, when, then, but, and, rule, example } from '@hypercubed/cypress-gherkin';
 
 Given('there are {int} {float} coins inside', (count: any, denomination: any) => {
   // TODO: implement this

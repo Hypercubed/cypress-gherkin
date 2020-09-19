@@ -1,4 +1,4 @@
-import { Given, feature, scenario, given, then, gherkin } from '../../src/index';
+import { Given, feature, scenario, given, then, gherkin } from '@hypercubed/cypress-gherkin';
 
 // Given('{airport} is closed because of a strike', (_airport: any) => {
 //   throw new Error('Should not be called because airport type not defined')
@@ -26,17 +26,23 @@ describe('errors', () => {
 
   // ** OR  **
 
-  feature.skip('My First Test (from Gherkin style)', () => {
-    scenario('Navigates on click', () => {
-      then('the URL should include "/commands/actions"');
+  feature('My First Test (from Gherkin style)', () => {
+    it('Navigates on click', () => {
+      cy.failsWith(() => {
+        then('the URL should include "/commands/actions"');
+      }, 'Missing Gherkin statement');
     });
 
-    scenario('Types and asserts', () => {
-      given('a user visits "https://example.cypress.io/commands/actions"');
+    it('Types and asserts', () => {
+      cy.failsWith(() => {
+        given('a user visits "https://example.cypress.io/commands/actions"');
+      }, 'Missing Gherkin statement');
     });
 
-    scenario('Missing type', () => {
-      given('a {user} visits "https://example.cypress.io/commands/actions"');
+    it('Missing type', () => {
+      cy.failsWith(() => {
+        given('a {user} visits "https://example.cypress.io/commands/actions"');
+      }, 'Missing Gherkin statement');
     });
   });
 });

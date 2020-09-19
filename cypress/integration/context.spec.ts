@@ -1,4 +1,4 @@
-import { When, Then, feature, scenario, and, when, then, gherkin } from '../../src/index';
+import { When, Then, feature, scenario, and, when, then, gherkin } from '@hypercubed/cypress-gherkin';
 
 const steps = {
   when(alias: string, value: string) {

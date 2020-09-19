@@ -1,4 +1,4 @@
-import { When, Then, feature, scenario, when, then, gherkin } from '../../src/index';
+import { When, Then, feature, scenario, when, then, gherkin } from '@hypercubed/cypress-gherkin';
 import { messages } from '@cucumber/messages';
 
 // type DocString = messages.GherkinDocument.Feature.Step.DocString;

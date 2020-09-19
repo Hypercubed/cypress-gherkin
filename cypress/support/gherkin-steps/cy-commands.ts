@@ -10,16 +10,36 @@ import './properties';
 
 Step('*', '(the user )visits {string}', cy.visit);
 
-Step('*', '(the user ){_click_}s on( the element) {string}', (action: string, selector: string) => {
+Step('*', '(the user )focuses on {string}', (selector: string) => {
+  const subject = selector.startsWith('@') ? cy.get(selector) : cy.contains(selector);
+  subject.focus();
+});
+
+Step('*', '(the user ){_click_}s', (action: string) => {
   switch (action) {
     case 'click':
-      cy.get(selector).click();
+      cy.focused().click();
       break;
     case 'doubleclick':
-      cy.get(selector).dblclick();
+      cy.focused().dblclick();
       break;
     case 'rightclick':
-      cy.get(selector).dblclick();
+      cy.focused().dblclick();
+      break;
+  }
+});
+
+Step('*', '(the user ){_click_}s on {string}', (action: string, selector: string) => {
+  const subject = selector.startsWith('@') ? cy.get(selector) : cy.contains(selector);
+  switch (action) {
+    case 'click':
+      subject.click();
+      break;
+    case 'doubleclick':
+      subject.dblclick();
+      break;
+    case 'rightclick':
+      subject.dblclick();
       break;
   }
 });
@@ -39,12 +59,18 @@ Step('*', '(the user )scrolls to the {_position_} of the page', (direction: stri
     });
 });
 
-Step('*', '(the user )types {string} in( the element) {string}', (value: string, selector: string) => {
-  cy.get(selector).first().type(value);
+Step('*', '(the user )types {string}', (value: string) => {
+  cy.focused().type(value);
 });
 
-Step('*', '(the user )clears( the element) {string}', (selector: string) => {
-  cy.get(selector).clear({ force: true });
+Step('*', '(the user )types {string} into {string}', (value: string, selector: string) => {
+  const subject = selector.startsWith('@') ? cy.get(selector) : cy.contains(selector);
+  subject.type(value);
+});
+
+Step('*', '(the user )clears {string}', (selector: string) => {
+  const subject = selector.startsWith('@') ? cy.get(selector) : cy.contains(selector);
+  subject.clear({ force: true });
 });
 
 Step('*', '(the user )waits for {int}ms', (ms: number) => {
@@ -63,8 +89,9 @@ Step('*', '(the user )presses {word} in {string}', (key: string, selector: strin
   cy.get(selector).type(`{${key}}`);
 });
 
-Step('*', '(the user )scrolls to( the element) {string}', (selector: string) => {
-  cy.get(selector).scrollIntoView();
+Step('*', '(the user )scrolls to {string}', (selector: string) => {
+  const subject = selector.startsWith('@') ? cy.get(selector) : cy.contains(selector);
+  subject.scrollIntoView();
 });
 
 // '(the user )scrolls to the {_position_} of the element {string}'

@@ -1,4 +1,4 @@
-import { transform } from '../../src/transform';
+import { transform } from '@hypercubed/cypress-gherkin/transform';
 
 function expectEqualByLine(str1: string, str2: string) {
   const _str1 = str1.trim().split('\n').map(s => s.trim());

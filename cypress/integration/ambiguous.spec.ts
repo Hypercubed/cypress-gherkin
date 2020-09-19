@@ -1,4 +1,4 @@
-import { When, gherkin, feature, scenario, given } from "../../src/index";
+import { When, gherkin, feature, scenario, given } from "@hypercubed/cypress-gherkin";
 
 When('a ambiguous step', () => {
   // nop
@@ -17,9 +17,15 @@ describe('throws errors on ambigious steps', () => {
 
   `);
 
-  feature.skip('a feature name', () => {
+  feature('a feature name', () => {
     scenario('a scenario name', () => {
-      given('a ambiguous step');
+      cy.failsWith(() => {
+        given('a ambiguous step');
+      }, 'Multiple step definitions match');
+    });
+
+    scenario('a scenario name', () => {
+      given('a unambiguous step');
     });
   });
 });

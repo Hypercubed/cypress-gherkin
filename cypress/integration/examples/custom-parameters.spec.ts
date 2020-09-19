@@ -1,4 +1,4 @@
-import { Given, When, Then, feature, scenario, when, then, ParameterType, gherkin } from '../../../src/index';
+import { Given, When, Then, feature, scenario, when, then, ParameterType, gherkin } from '@hypercubed/cypress-gherkin';
 
 const notes = ["A", "B", "C", "D", "E", "F", "G"];
 

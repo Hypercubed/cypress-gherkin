@@ -37,7 +37,15 @@ ParameterType({
 
 ParameterType({
   name: '_state_',
-  regexp: /(visible|enabled|disabled|selected|checked|empty)/,
+  regexp: /(visible|enabled|disabled|selected|checked|empty|focused)/,
+});
+
+ParameterType({
+  name: 'ordinal',
+  regexp: /(\d+)(?:st|nd|rd|th)/,
+  transformer(s: string) {
+    return parseInt(s, 10);
+  }
 });
 
 // keys (enter|tab|backspace|del|downarrow|end|enter|esc|home|insert|leftarrow|pagedown|pageup|rightarrow|selectall|uparrow)
