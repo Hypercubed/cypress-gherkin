@@ -23,7 +23,7 @@
   "author": "J. Harshbarger",
   "license": "MIT",
   "dependencies": {
-    "@cucumber/cucumber-expressions": "^10.3.0",
+    "@cucumber/cucumber-expressions": "^15.0.0",
     "@cucumber/gherkin": "^15.0.0",
     "@cucumber/messages": "^13.0.1",
     "@types/long": "^4.0.1"
